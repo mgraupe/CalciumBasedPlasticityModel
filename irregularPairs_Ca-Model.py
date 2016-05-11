@@ -104,7 +104,9 @@ if synChange.Cpre>synChange.Cpost:
     # reorder entire array to end up with increasing time
     resultsIrr = resultsIrr[::-1]
     
-
+if not os.path.exists(outputDir):
+    os.makedirs(outputDir)
+    
 np.save(outputDir+'irregularSpikePairs_vs_deltaT_%s.npy' % params,resultsIrr)
 np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_%s.dat' % params,resultsIrr)
 
