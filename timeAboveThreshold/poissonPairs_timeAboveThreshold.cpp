@@ -43,7 +43,7 @@ using namespace std;
 // ------------------- global variables---------------------------------------
 
 const double Ca_end = 8.;
-const double delta_Ca = 0.001; //0.0001; // 0.0001; 
+//const double delta_Ca = 0.0001; //0.0001; // 0.0001; 
 
 
 //--------------------analytical part of integral------------------------------
@@ -67,7 +67,7 @@ double analytical_integral (double b, long b_steps, long i, double delta_Ca, dou
 	return integral;
 }
 
-void time_above_treshold(double * time_t, double rate_pre, double rate_post, double ppp, double delta_tt, double tauCa, double theta_d, double theta_p, double C_pre, double C_post){
+void time_above_treshold(double * time_t, double rate_pre, double rate_post, double ppp, double delta_tt, double tauCa, double theta_d, double theta_p, double C_pre, double C_post, double delta_Ca){
 
   
 	
@@ -435,6 +435,7 @@ int main(int argc, char* argv[]){
     double rate_pre   = atof(argv[7]);
     double rate_post  = atof(argv[8]);
     double p          = atof(argv[9]);
+    double delta_Ca   = atof(argv[10]);
     
     // AUX variables
     double timeAboveThres[2];
@@ -442,7 +443,7 @@ int main(int argc, char* argv[]){
     
     ofstream integral_f("timeAboveThreshold.dat");
     
-    time_above_treshold(timeAboveThres,rate_pre,rate_post,p,deltaT,tauCa,theta_d,theta_p,Cpre,Cpost);
+    time_above_treshold(timeAboveThres,rate_pre,rate_post,p,deltaT,tauCa,theta_d,theta_p,Cpre,Cpost,delta_Ca);
 
     timeAboveDepressionThreshold   = timeAboveThres[0];
     timeAbovePotentiationThreshold = timeAboveThres[1];

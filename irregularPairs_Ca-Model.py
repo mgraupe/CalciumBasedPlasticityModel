@@ -34,7 +34,7 @@ def runIrregularPairSimulations(args):
     postRate = args[2]
     p        = args[3]
     
-    (alphaD,alphaP) = tat.irregularSpikePairs(dT,preRate,postRate,p)
+    (alphaD,alphaP) = tat.irregularSpikePairs(dT,preRate,postRate,p,deltaCa)
     synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
     
     return synChange.mean
@@ -57,6 +57,9 @@ rho0        = 0.5
 
 # nonlinearity factor
 nl = 1.
+
+# numerical integration step width
+deltaCa = 0.01 #  0.0001 
 
 # parameter-set to use
 params = 'solOld'
