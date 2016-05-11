@@ -84,8 +84,8 @@ void time_above_treshold(double * time_t, double rate_pre, double rate_post, dou
 	double normalization, time_below;
  	
     //if (write_output) {
-    ofstream amp_f("amplitude_distribution.dat");
-    ofstream thresh_f("time_above_threshold.dat");
+    //ofstream amp_f("amplitude_distribution.dat");
+    //ofstream thresh_f("time_above_threshold.dat");
     //}
 
     p          = ppp; 
@@ -369,7 +369,7 @@ void time_above_treshold(double * time_t, double rate_pre, double rate_post, dou
 			exit(1);
 		}
 		//if (write_output) {
-        amp_f << i << "\t" << ((double)i)*delta_Ca << "\t" << rho[i] << "\t" << integral1[i] << "\t" << integral2[i] << "\t" << integral3[i] << "\t" << integral4[i] << endl;
+        //amp_f << i << "\t" << ((double)i)*delta_Ca << "\t" << rho[i] << "\t" << integral1[i] << "\t" << integral2[i] << "\t" << integral3[i] << "\t" << integral4[i] << endl;
         //}
 				
 	}
@@ -409,11 +409,11 @@ void time_above_treshold(double * time_t, double rate_pre, double rate_post, dou
 		//cout << threshold << "  " << time_above << "  " << time_above_a << "  " << time_below << "  " << normalization <<  endl;
 		time_t[j] = time_above_a;
         //if (write_output) {
-        thresh_f << threshold << "  " << time_above << "  " << time_above_a << "  " << time_below << "  " << normalization << endl;
+        //thresh_f << threshold << "  " << time_above << "  " << time_above_a << "  " << time_below << "  " << normalization << endl;
         //}
 	}
-    amp_f.close();
-    thresh_f.close();
+    //amp_f.close();
+    //thresh_f.close();
     
 	//delete[] rho,integral1,integral2,integral3,integral4, convolution;
 	
