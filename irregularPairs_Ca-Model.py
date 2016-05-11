@@ -28,6 +28,7 @@ from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
 
 
+##########################################################
 def runIrregularPairSimulations(args):
     dT       = args[0]
     preRate  = args[1]
@@ -40,12 +41,33 @@ def runIrregularPairSimulations(args):
     return synChange.mean
 
 ##########################################################
+def runRegularPairSimulations(args):
+    dT       = args[0]
+    preRate  = args[1]
+    postRate = args[2]
+    p        = args[3]
+    
+    (alphaD,alphaP) = tat.spikePairFrequency(dT,preRate)
+    synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
+    
+    return synChange.mean
+
+##########################################################
+
+if len(sys.argv[1]) > 0:
+    params = sys.argv[1]
+else:
+    print "No parameter set specified!"
+    sys.exit(0)
+
+
+##########################################################
 # output directory
 outputDir = 'simResults/'
 
-##########################################################
+##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
-##########################################################
+##################################################################################################
 # Parameter of the stimulation protocol
 frequencies   = array([1.,5.,10.,20.,30.,50.])   # frequency of spike-pair presentations in pairs/sec
 T_total     = 10.     # total time of stimulation in sec
@@ -62,7 +84,7 @@ nl = 1.
 deltaCa = 0.01 #  0.0001 
 
 # parameter-set to use
-params = 'solOld'
+#params = 'solOld'
 
 nCases = len(frequencies)
 
@@ -113,10 +135,56 @@ if not os.path.exists(outputDir):
 np.save(outputDir+'irregularSpikePairs_vs_deltaT_%s.npy' % params,resultsIrr)
 np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_%s.dat' % params,resultsIrr)
 
+##########################################################
+# synaptic change vs Delta T for regular Pairs
+##########################################################
+# Parameter of the stimulation protocol
+frequencies   = array([1.,5.,10.,20.,30.,50.])   # frequency of spike-pair presentations in pairs/sec
+T_total     = 10.     # total time of stimulation in sec
+DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
+DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
+DeltaTsteps =  101.  # steps between start and end value
+ppp         = 1.
+rho0        = 0.5
 
-##########################################################
+# nonlinearity factor
+nl = 1.
+
+nCases = len(frequencies)
+
+
+###########################################################
+# initialize arrays 
+
+deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
+
+resultsReg = zeros(len(frequencies)*3+2)
+
+###########################################################
+# simulation loop over range of deltaT values
+for i in range(len(deltaT)):
+    #
+    print 'deltaT : ', deltaT[i]
+    
+    args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
+
+    rrr = pool.map(runRegularPairSimulations,args)
+    #for n in range(len(frequencies)):
+    #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
+    #pdb.set_trace()
+    res1 = hstack((deltaT[i],frequencies,frequencies,ppp,rrr))
+    resultsReg = vstack((resultsReg,res1))
+
+resultsReg = resultsReg[1:]
+
+np.save(outputDir+'regularSpikePairs_vs_deltaT_%s.npy' % params,resultsReg)
+np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_%s.dat' % params,resultsReg)
+
+
+
+##################################################################################################
 # synaptic change vs frequency
-##########################################################
+##################################################################################################
 
 deltaTs   = array([-0.01,0.,0.01])   # frequency of spike-pair presentations in pairs/sec
 T_total     = 10.     # total time of stimulation in sec
