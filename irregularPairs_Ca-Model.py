@@ -35,7 +35,7 @@ def runIrregularPairSimulations(args):
     postRate = args[2]
     p        = args[3]
     
-    (alphaD,alphaP) = tat.irregularSpikePairs(dT,preRate,postRate,p,deltaCa)
+    (alphaD,alphaP) = tat.irregularSpikePairs(dT-synChange.D,preRate,postRate,p,deltaCa)
     synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
     
     return synChange.mean
@@ -47,7 +47,7 @@ def runRegularPairSimulations(args):
     postRate = args[2]
     p        = args[3]
     
-    (alphaD,alphaP) = tat.spikePairFrequency(dT,preRate)
+    (alphaD,alphaP) = tat.spikePairFrequency(dT-synChange.D,preRate)
     synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
     
     return synChange.mean
