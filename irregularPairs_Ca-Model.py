@@ -35,7 +35,10 @@ def runIrregularPairSimulations(args):
     postRate = args[2]
     p        = args[3]
     
-    (alphaD,alphaP) = tat.irregularSpikePairs(dT-synChange.D,preRate,postRate,p,deltaCa)
+    if synChange.Cpre>synChange.Cpost:
+        (alphaD,alphaP) = tat.irregularSpikePairs(dT+synChange.D,preRate,postRate,p,deltaCa)
+    else:
+        (alphaD,alphaP) = tat.irregularSpikePairs(dT-synChange.D,preRate,postRate,p,deltaCa)
     synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
     
     return synChange.mean
@@ -81,7 +84,7 @@ rho0        = 0.5
 nl = 1.
 
 # numerical integration step width
-deltaCa = 0.01 #  0.0001 
+deltaCa = 0.005 #0.01 #  0.0001 
 
 # parameter-set to use
 #params = 'solOld'
@@ -125,7 +128,7 @@ resultsIrr = resultsIrr[1:]
 # the array has to be flipped if Cpre>Cpost 
 if synChange.Cpre>synChange.Cpost:
     # invert time axis
-    resultsIrr[:,0] = resultsIrr[:,0][::-1]
+    resultsIrr[:,0] = resultsIrr[:,0][::-1] 
     # reorder entire array to end up with increasing time
     resultsIrr = resultsIrr[::-1]
     
@@ -186,19 +189,17 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_%s.dat' % params,resultsReg)
 # synaptic change vs frequency
 ##################################################################################################
 
-deltaTs   = array([-0.01,0.,0.01])   # frequency of spike-pair presentations in pairs/sec
+deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
 T_total     = 10.     # total time of stimulation in sec
 Freqstart = 1.    # start time difference between pre- and post-spike, in sec
 FreqTend   =  60.    # end time difference between pre- and post-spike, in sec
 FreqSteps =  60  # steps between start and end value
-ppp         = array([0.4,0.,0.4])
+ppp         = array([1.,0.4,0.,0.4,1.])
 rho0        = 0.5
 
 # nonlinearity factor
 nl = 1.
 
-# parameter-set to use
-params = 'solOld'
 
 nCases = len(deltaTs)
 
