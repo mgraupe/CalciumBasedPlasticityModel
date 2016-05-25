@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import sys
+import pdb
 
 import good_solutions
             
@@ -206,21 +207,36 @@ class synapticChange():
         elif fromFile:
             exec('sol = good_solutions.%s' % plasticityCase)
             
-            #print sol
-            self.tauCa = sol[0][0]
-            self.Cpre  = sol[0][1]
-            self.Cpost = sol[0][2]
-            self.thetaD = 1.
-            self.thetaP = 1.3
-            self.gammaD = sol[0][3]
-            self.gammaP = sol[0][4]
-            self.sigma  = 1.
-            self.tau    = sol[0][5]
-            self.rhoStar= 0.5
-            self.D      = sol[0][6]
-            self.beta   = 0.5
-            self.b      = 2.
-            
+            if len(sol[0]) == 7 :
+                #print sol
+                self.tauCa = sol[0][0]
+                self.Cpre  = sol[0][1]
+                self.Cpost = sol[0][2]
+                self.thetaD = 1.
+                self.thetaP = 1.3
+                self.gammaD = sol[0][3]
+                self.gammaP = sol[0][4]
+                self.sigma  = 1.
+                self.tau    = sol[0][5]
+                self.rhoStar= 0.5
+                self.D      = sol[0][6]
+                self.beta   = 0.5
+                self.b      = 2.
+            elif len(sol[0]) == 8:
+                #print sol
+                self.tauCa = sol[0][0]
+                self.Cpre  = sol[0][1]
+                self.Cpost = sol[0][2]
+                self.thetaD = 1.
+                self.thetaP = sol[0][3]
+                self.gammaD = sol[0][4]
+                self.gammaP = sol[0][5]
+                self.sigma  = 1.
+                self.tau    = sol[0][6]
+                self.rhoStar= 0.5
+                self.D      = sol[0][7]
+                self.beta   = 0.5
+                self.b      = 2.
         else:
             print 'Choose from one of the available parameter sets!'
             sys.exit(1)
