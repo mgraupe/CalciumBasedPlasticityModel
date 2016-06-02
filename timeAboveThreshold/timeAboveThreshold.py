@@ -379,7 +379,7 @@ class timeAboveThreshold():
                 else:
                         arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpre) + ' ' + str(self.Cpost) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
     
-                print arguments
+                #print arguments
                 (out,err) = commands.getstatusoutput('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments) 
                 alphaD = float(err.split()[0])
                 alphaP = float(err.split()[1])
