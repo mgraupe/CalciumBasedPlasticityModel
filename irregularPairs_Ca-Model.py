@@ -30,11 +30,12 @@ from synapticChange import synapticChange
 
 ##########################################################
 def runIrregularPairSimulations(args):
+    print 'a'
     dT       = args[0]
     preRate  = args[1]
     postRate = args[2]
     p        = args[3]
-    
+    print 'here'
     if synChange.Cpre>synChange.Cpost:
         (alphaD,alphaP) = tat.irregularSpikePairs(dT+synChange.D,preRate,postRate,p,deltaCa)
     else:
@@ -79,7 +80,9 @@ outputDir = 'simResults/'
 
 # numerical integration step width
 deltaCa = 0.005 #0.01 #  0.0001 
-    
+
+pool = multiprocessing.Pool()
+
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 ##################################################################################################
@@ -111,8 +114,6 @@ if case == 'deltaTFreq':
     # initialize arrays 
 
     deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
-
-    pool = multiprocessing.Pool()
 
     resultsIrr = zeros(len(frequencies)*3+2)
 
@@ -224,8 +225,6 @@ if case == 'deltaTP':
 
     deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
 
-    pool = multiprocessing.Pool()
-
     resultsIrr = zeros(len(ppp)*2+3)
 
     ###########################################################
@@ -235,7 +234,7 @@ if case == 'deltaTP':
         print 'deltaT : ', deltaT[i]
         
         args = column_stack((ones(nCases)*deltaT[i],ones(nCases)*frequency,ones(nCases)*frequency,ppp))
-
+        #pdb.set_trace()
         rrr = pool.map(runIrregularPairSimulations,args)
         #for n in range(len(frequencies)):
         #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
