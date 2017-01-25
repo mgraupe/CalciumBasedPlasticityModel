@@ -3,7 +3,7 @@ import math
 import sys
 import pdb
 
-import good_solutions
+import parameter_fit_solutions
             
 
 ##########################################################
@@ -17,6 +17,23 @@ class synapticChange():
         
         # chose parameters from predefined set or from file
         self.choseParameterSet(plasticityCase,fromFile)
+        
+        # read in experimental data
+        dataDir = 'experimental_data/'
+        #dataDir = 'experimental_data/'
+        
+        jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
+        jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
+
+        self.xDataReg = jesperReg[:,[0,1]]
+        self.xDataReg[:,1] = self.xDataReg[:,1]/1000. # everything in sec
+        self.yDataReg = jesperReg[:,2]+1. # Sjoestroem's data is normalized to 0
+        self.sigmaDataReg = jesperReg[:,3]
+        
+        
+        self.xDataStoch = jesperStoch[:,0]
+        self.yDataStoch = jesperStoch[:,1]+1. # Sjoestroem's data is normalized to 0
+        self.sigmaDataStoch = jesperStoch[:,2]
 
     ##########################################################
     # calculate UP and DOWN transition probabilities
@@ -70,7 +87,7 @@ class synapticChange():
     def choseParameterSet(self, plasticityCase,fromFile=False):
         if plasticityCase == 'DP':
             print 'DP'
-            self.self.tauCa = 0.02 # in sec
+            self.tauCa = 0.02 # in sec
             self.Cpre = 1.
             self.Cpost = 2.
             self.thetaD  = 1.
@@ -85,7 +102,7 @@ class synapticChange():
             self.b       = 5.
         elif plasticityCase == 'DPD':
             print 'DPD'
-            self.self.tauCa = 0.02 # in sec
+            self.tauCa = 0.02 # in sec
             self.Cpre = 0.9
             self.Cpost = 0.9
             self.thetaD  = 1.
@@ -100,7 +117,7 @@ class synapticChange():
             self.b       = 5.
         elif plasticityCase == 'DPDprime':
             print 'DPDprime'
-            self.self.tauCa = 0.02 # in sec
+            self.tauCa = 0.02 # in sec
             self.Cpre = 1.
             self.Cpost = 2.
             self.thetaD  = 1
@@ -115,7 +132,7 @@ class synapticChange():
             self.b       = 5.
         elif plasticityCase == 'P':
             print 'P'
-            self.self.tauCa = 0.02 # in sec
+            self.tauCa = 0.02 # in sec
             self.Cpre = 2.
             self.Cpost = 2.
             self.thetaD  = 1.
@@ -130,7 +147,7 @@ class synapticChange():
             self.b       = 5.
         elif plasticityCase == 'D':
             print 'D'
-            self.self.tauCa = 0.02 # in sec
+            self.tauCa = 0.02 # in sec
             self.Cpre = 0.6
             self.Cpost = 0.6
             self.thetaD  = 1.
@@ -145,7 +162,7 @@ class synapticChange():
             self.b       = 5.
         elif plasticityCase == 'Dprime':
             print 'Dprime'
-            self.self.tauCa = 0.02 # in sec
+            self.tauCa = 0.02 # in sec
             self.Cpre = 1.
             self.Cpost = 2.
             self.thetaD  = 1.
@@ -160,7 +177,7 @@ class synapticChange():
             self.b       = 5.
         elif plasticityCase == 'hippocampal slices':
             print 'hippocampal slices'
-            self.self.tauCa = 0.0488373 # in sec
+            self.tauCa = 0.0488373 # in sec
             self.Cpre = 1.
             self.Cpost = 0.275865
             self.thetaD  = 1.
@@ -175,7 +192,7 @@ class synapticChange():
             self.b       = 5.28145
         elif plasticityCase == 'hippocampal cultures':
             print 'hippocampal cultures'
-            self.self.tauCa = 0.0119536 # in sec
+            self.tauCa = 0.0119536 # in sec
             self.Cpre = 0.58156
             self.Cpost = 1.76444
             self.thetaD  = 1.
@@ -190,7 +207,7 @@ class synapticChange():
             self.b       = 36.0263
         elif plasticityCase == 'cortical slices':
             print 'cortical slices'
-            self.self.tauCa = 0.0226936 # in sec
+            self.tauCa = 0.0226936 # in sec
             self.Cpre = 0.5617539
             self.Cpost = 1.23964
             self.thetaD  = 1.
@@ -205,7 +222,7 @@ class synapticChange():
             self.b       = 5.40988
         
         elif fromFile:
-            exec('sol = good_solutions.%s' % plasticityCase)
+            exec('sol = parameter_fit_solutions.%s' % plasticityCase)
             
             if len(sol[0]) == 7 :
                 #print sol
@@ -237,6 +254,7 @@ class synapticChange():
                 self.D      = sol[0][7]
                 self.beta   = 0.5
                 self.b      = 2.
+            self.mse= sol[1]
         else:
             print 'Choose from one of the available parameter sets!'
             sys.exit(1)

@@ -51,12 +51,10 @@ def runRegularPairSimulations(args):
     postRate = args[2]
     p        = args[3]
     
-    (alphaD,alphaP) = tat.spikePairFrequency(dT-synChange.D,preRate)
+    (alphaD,alphaP) = tat.spikePairFrequencyNonlinear(dT-synChange.D,preRate)
     synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
     
     return synChange.mean
-
-
 
 ##########################################################
 ##########################################################
@@ -64,15 +62,14 @@ def runRegularPairSimulations(args):
 outputDir = 'simResults/'
 
 # numerical integration step width
-deltaCa     = 0.005 # 0.005 #0.01 #  0.0001 
+deltaCa     = 0.0001 #0.01 #  0.0001 
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
-nl = 1.      # nonlinearity factor
+nl = 2.  # nonlinearity factor
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
-
-params = 'linearCaModel'
+params = 'nonlinearCaModel'
 synChange = synapticChange(params,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
@@ -82,11 +79,10 @@ pool = multiprocessing.Pool()
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 #################################################################################################
-
-print 'irregular pairs : synaptic change vs Delta T for six frequencies and one p\'s'
+print 'irregular pairs : synaptic change vs Delta T for frequencies p\'s'
 
 # Parameter of the stimulation protocol
-frequencies   = array([1.,5.,10.,20.,30.,50.])   # frequency of spike-pair presentations in pairs/sec
+frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
 DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
 DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
 DeltaTsteps =  101.  # steps between start and end value
@@ -183,10 +179,10 @@ np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_%s.dat' % params
 ##########################################################
 # synaptic change vs Delta T for regular Pairs
 ##########################################################
-print 'regular pairs : synaptic change vs Delta T for six frequencies and one p'
+print 'regular pairs : synaptic change vs Delta T for frequencies p\'s'
 
 # Parameter of the stimulation protocol
-frequencies   = array([1.,5.,10.,20.,30.,50.])   # frequency of spike-pair presentations in pairs/sec
+frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
 DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
 DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
 DeltaTsteps =  101.  # steps between start and end value
@@ -225,9 +221,9 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_%s.dat' % param
 print 'irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s'
 
 deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
-Freqstart = 1.    # start time difference between pre- and post-spike, in sec
-FreqTend   =  60.    # end time difference between pre- and post-spike, in sec
-FreqSteps =  60  # steps between start and end value
+Freqstart = 0.1    # start time difference between pre- and post-spike, in sec
+FreqTend   =  80.    # end time difference between pre- and post-spike, in sec
+FreqSteps =  120  # steps between start and end value
 ppp         = array([0.4,0.2,0.,0.2,0.4])
 
 nCases = len(deltaTs)

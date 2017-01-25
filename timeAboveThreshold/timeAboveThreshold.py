@@ -16,7 +16,8 @@ class timeAboveThreshold():
                 self.thetaD  = thetaD
                 self.thetaP  = thetaP
                 # determine eta based on nonlinearity factor and amplitudes
-                self.eta = (nonlinear*(self.Cpost + self.Cpre) - self.Cpost)/self.Cpre - 1.
+                self.nonlinear = nonlinear
+                self.eta = (self.nonlinear*(self.Cpost + self.Cpre) - self.Cpost)/self.Cpre - 1.
                 
         ###############################################################################
         # regular spike-pairs vs. frequency
@@ -373,19 +374,172 @@ class timeAboveThreshold():
         # irregular spike-pairs, the numerical integration is run in an external C++ code for performance improvment
         def irregularSpikePairs(self,deltaT,preRate,postRate,ppp,deltaCa):
                 
-                # the first argument calcium ampliutde has to be smaller than the second
-                if self.Cpre>self.Cpost:
-                        arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpost) + ' ' + str(self.Cpre) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
+                # linear calcium dynamics, numerical integration possible
+                if self.nonlinear == 1.:
+                    #print 'time above threshold : integration for LINEAR calcium dynamics'
+                    # the first argument calcium ampliutde has to be smaller than the second
+                    if self.Cpre>self.Cpost:
+                            arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpost) + ' ' + str(self.Cpre) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
+                    else:
+                            arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpre) + ' ' + str(self.Cpost) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
+        
+                    #print arguments
+                    (out,err) = commands.getstatusoutput('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments) 
+                    alphaD = float(err.split()[0])
+                    alphaP = float(err.split()[1])
+                    
+                # nonlinear calcium dynamics
                 else:
-                        arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpre) + ' ' + str(self.Cpost) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
-    
-                #print arguments
-                (out,err) = commands.getstatusoutput('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments) 
-                alphaD = float(err.split()[0])
-                alphaP = float(err.split()[1])
+                    #print 'time above threshold : NONLINEAR calcium dynamics'
+                    
+                    # construction of the spike train
+                    #tStart = 0.1 # start time at 100 ms
+                    
+                    random.seed(7)
+                    
+                    tPre = []
+                    tPostCorr = []
+                    tPostInd = []
+                    
+                    tPre.append(0)
+                    tPostInd.append(0)
+                    
+                    for i in range(10000):
+                        tPre.append(tPre[-1] + random.exponential(1./preRate))
+                        if rand()<ppp:
+                            tPostCorr.append(tPre[-1]+deltaT)
+                        if (postRate-ppp*preRate) > 0.:
+                            tPostInd.append(tPostInd[-1] + random.exponential(1./(postRate-ppp*preRate)))
+                    
+                    
+                    tPost = tPostCorr + tPostInd[1:]
+                    
+                    tPostSorted = sorted(tPost, key=lambda tPost: tPost)
+                    
+                    tAll = zeros((len(tPre[1:]) + len(tPostSorted),2))
+                    
+                    tAll[:,0] = hstack((tPre[1:],tPostSorted))
+                    tAll[:,1] = hstack((zeros(len(tPre[1:])),ones(len(tPostSorted))))
+                    tList = tAll.tolist()
+                    tListSorted = sorted(tList, key=lambda tList: tList[0])
+                    
+                    #tListSorted.append([Npres/freq,2])
+                    
+                    ###########################################################
+                    # event-based integration
+                    ca = []
+                    # CaTotal, CaPre, CaPost, time
+                    ca.append([0.,0.,0.,0.])
+                    pre = 0
+                    post = 0
+                    tD = 0.
+                    tP = 0.
+                    for i in tListSorted:
+                            #
+                            caTotOld    = ca[-1][0]
+                            caPreOld    = ca[-1][1]
+                            caPostOld   = ca[-1][2]
+                            tOld        = ca[-1][3]
+                            #caTotTemp  = caTotOld*exp(-(i[0]-tOld)/self.tauCa)
+                            caPreTemp  = caPreOld*exp(-(i[0]-tOld)/self.tauCa)
+                            caPostTemp = caPostOld*exp(-(i[0]-tOld)/self.tauCa)
+                            caTotTemp  = caPreTemp + caPostTemp
+                            if caTotOld > self.thetaD:
+                                    if caTotTemp > self.thetaD:
+                                            tD += i[0]-tOld
+                                    else:
+                                            tD += (self.tauCa)*log(caTotOld/self.thetaD)
+                            if caTotOld > self.thetaP:
+                                    if caTotTemp > self.thetaP:
+                                            tP += i[0]-tOld
+                                    else:
+                                            tP += (self.tauCa)*log(caTotOld/self.thetaP)
+                            # postsynaptic spike
+                            if i[1] == 1:
+                                    caPostTemp += self.Cpost + self.eta*caPreTemp
+                                    post+=1
+                            # presynaptic spike
+                            if i[1] == 0:
+                                    caPreTemp += self.Cpre
+                                    pre+=1
+                            caTotTemp = caPreTemp + caPostTemp
+                            ca.append([caTotTemp,caPreTemp,caPostTemp,i[0]])
+                            #
+                            #pdb.set_trace()
+                    alphaD = tD/tListSorted[-1][0]
+                    alphaP = tP/tListSorted[-1][0]
+                    #print alphaD, alphaP
+                ####################################################################
                 
                 return (alphaD,alphaP)
             
+            
+        ###############################################################################
+        # stochastic Sjoestroem 2001 protocol
+        def spikePairStochastic(self,DeltaTStart,DeltaTEnd,freq,Npres):
+                tStart = 0.1 # start time at 100 ms
                 
-
+                Npres = Npres*12
+                timeAbove = zeros((1,2))
+                
+                tD = 0.
+                tP = 0.
+                random.seed(7)
+                tPre = arange(Npres)/freq + tStart + (DeltaTStart + rand(Npres)*(DeltaTEnd-DeltaTStart))
+                tPost = tPre +  (DeltaTStart + rand(Npres)*(DeltaTEnd-DeltaTStart))
+                
+                tAll = zeros((2*Npres,2))
+                
+                tAll[:,0] = hstack((tPre,tPost))
+                tAll[:,1] = hstack((zeros(Npres),ones(Npres)))
+                tList = tAll.tolist()
+                
+                tListSorted = sorted(tList, key=lambda tList: tList[0])
+                
+                tListSorted.append([Npres/freq,2])
+                
+                ca = []
+                # CaTotal, CaPre, CaPost, time
+                ca.append([0.,0.,0.,0.])
+                pre = 0
+                post = 0
+                for i in tListSorted:
+                        #
+                        caTotOld    = ca[-1][0]
+                        caPreOld    = ca[-1][1]
+                        caPostOld   = ca[-1][2]
+                        tOld        = ca[-1][3]
+                        #caTotTemp  = caTotOld*exp(-(i[0]-tOld)/self.tauCa)
+                        caPreTemp  = caPreOld*exp(-(i[0]-tOld)/self.tauCa)
+                        caPostTemp = caPostOld*exp(-(i[0]-tOld)/self.tauCa)
+                        caTotTemp  = caPreTemp + caPostTemp
+                        if caTotOld > self.thetaD:
+                                if caTotTemp > self.thetaD:
+                                        tD += i[0]-tOld
+                                else:
+                                        tD += (self.tauCa)*log(caTotOld/self.thetaD)
+                        if caTotOld > self.thetaP:
+                                if caTotTemp > self.thetaP:
+                                        tP += i[0]-tOld
+                                else:
+                                        tP += (self.tauCa)*log(caTotOld/self.thetaP)
+                        # postsynaptic spike
+                        if i[1] == 1:
+                                caPostTemp += self.Cpost + self.eta*caPreTemp
+                                post+=1
+                        # presynaptic spike
+                        if i[1] == 0:
+                                caPreTemp += self.Cpre
+                                pre+=1
+                        caTotTemp = caPreTemp + caPostTemp
+                        ca.append([caTotTemp,caPreTemp,caPostTemp,i[0]])
+                #
+                #pdb.set_trace()
+                alphaD = tD/(float(Npres))
+                alphaP = tP/(float(Npres))
+                
+                return (tD/float(Npres),tP/float(Npres))
+            
+                #return (alphaD,alphaP)
+                
 
