@@ -568,6 +568,111 @@ class timeAboveThreshold():
                 # print alphaD, alphaP
 
                 return (alphaD, alphaP)
+        ###############################################################################
+        # irregular spike-pairs and short-term plasticity, event-based integration the numerical integration is run in an external C++ code for performance improvment
+        def irregularSpikePairsTMM(self, deltaT, preRate, postRate, ppp, U, tauFac, tauDep):
+
+
+                # construction of the spike train
+                # tStart = 0.1 # start time at 100 ms
+
+                random.seed(7)
+
+                tPre = []
+                tPostCorr = []
+                tPostInd = []
+
+                tPre.append(0)
+                tPostInd.append(0)
+
+                for i in range(10000):
+                        tPre.append(tPre[-1] + random.exponential(1. / preRate))
+                        if rand() < ppp:
+                                tPostCorr.append(tPre[-1] + deltaT)
+                        if (postRate - ppp * preRate) > 0.:
+                                tPostInd.append(
+                                        tPostInd[-1] + random.exponential(1. / (postRate - ppp * preRate)))
+
+                tPost = tPostCorr + tPostInd[1:]
+
+                tPostSorted = sorted(tPost, key=lambda tPost: tPost)
+
+                cpre = zeros(len(tPre[1:]))
+                x    = zeros(len(tPre[1:]))
+                u    = zeros(len(tPre[1:]))
+                if U != 0.:
+                        u[0] = U
+                        x[0] = 1.
+                        cpre[0] = u[0] * x[0]
+                        for i in range(1, len(tPre[1:])):
+                                u[i] = u[i - 1] * exp(-(tPre[i+1]-tPre[i]) / tauFac) + U * (1. - u[i - 1] * exp(-(tPre[i+1]-tPre[i]) / tauFac))
+                                x[i] = 1. - (1. - (x[i - 1] - u[i - 1] * x[i - 1])) * exp(-(tPre[i+1]-tPre[i]) / tauDep)
+                                cpre[i] = u[i] * x[i]
+                        cpre *= self.Cpre
+                        #cpre[0] = 1.
+                        #for i in range(1, len(tPre[1:])):
+                        #        cpre[i] = 1. - (1. - (cpre[i - 1] - U * cpre[i - 1])) * exp(-(tPre[i+1]-tPre[i])/tauRec)
+                        #cpre *= U * self.Cpre
+                else:
+                        cpre[:] = self.Cpre
+
+
+                tAll = zeros((len(tPre[1:]) + len(tPostSorted), 3))
+
+                tAll[:, 0] = hstack((tPre[1:], tPostSorted))
+                tAll[:, 1] = hstack((zeros(len(tPre[1:])), ones(len(tPostSorted))))
+                tAll[:, 2] = hstack((cpre,repeat(self.Cpost,len(tPostSorted))))
+                tList = tAll.tolist()
+                tListSorted = sorted(tList, key=lambda tList: tList[0])
+
+                # tListSorted.append([Npres/freq,2])
+
+                ###########################################################
+                # event-based integration
+                ca = []
+                # CaTotal, CaPre, CaPost, time
+                ca.append([0., 0., 0., 0.])
+                pre = 0
+                post = 0
+                tD = 0.
+                tP = 0.
+                for i in tListSorted:
+                        #
+                        caTotOld = ca[-1][0]
+                        caPreOld = ca[-1][1]
+                        caPostOld = ca[-1][2]
+                        tOld = ca[-1][3]
+                        # caTotTemp  = caTotOld*exp(-(i[0]-tOld)/self.tauCa)
+                        caPreTemp = caPreOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caPostTemp = caPostOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caTotTemp = caPreTemp + caPostTemp
+                        if caTotOld > self.thetaD:
+                                if caTotTemp > self.thetaD:
+                                        tD += i[0] - tOld
+                                else:
+                                        tD += (self.tauCa) * log(caTotOld / self.thetaD)
+                        if caTotOld > self.thetaP:
+                                if caTotTemp > self.thetaP:
+                                        tP += i[0] - tOld
+                                else:
+                                        tP += (self.tauCa) * log(caTotOld / self.thetaP)
+                        # postsynaptic spike
+                        if i[1] == 1:
+                                caPostTemp += i[2]
+                                post += 1
+                        # presynaptic spike
+                        if i[1] == 0:
+                                caPreTemp += i[2]
+                                pre += 1
+                        caTotTemp = caPreTemp + caPostTemp
+                        ca.append([caTotTemp, caPreTemp, caPostTemp, i[0]])
+                        #
+                        # pdb.set_trace()
+                alphaD = tD / tListSorted[-1][0]
+                alphaP = tP / tListSorted[-1][0]
+                # print alphaD, alphaP
+
+                return (alphaD, alphaP)
 
         ###############################################################################
         # stochastic Sjoestroem 2001 protocol
@@ -661,6 +766,90 @@ class timeAboveThreshold():
                     cpre *= U*self.Cpre
                 else:
                     cpre[:] = self.Cpre
+
+                #print cpre
+                tAll[:, 0] = hstack((tPre, tPost))
+                tAll[:, 1] = hstack((zeros(Npres), ones(Npres)))
+                tAll[:, 2] = hstack((cpre,repeat(self.Cpost,Npres)))
+                tList = tAll.tolist()
+
+                tListSorted = sorted(tList, key=lambda tList: tList[0])
+
+                tListSorted.append([Npres / freq + tStart, 2,0])
+
+                ca = []
+                # CaTotal, CaPre, CaPost, time
+                ca.append([0., 0., 0., 0.])
+                pre = 0
+                post = 0
+                for i in tListSorted:
+                        #
+                        caTotOld = ca[-1][0]
+                        caPreOld = ca[-1][1]
+                        caPostOld = ca[-1][2]
+                        tOld = ca[-1][3]
+                        # caTotTemp  = caTotOld*exp(-(i[0]-tOld)/self.tauCa)
+                        caPreTemp = caPreOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caPostTemp = caPostOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caTotTemp = caPreTemp + caPostTemp
+                        if caTotOld > self.thetaD:
+                                if caTotTemp > self.thetaD:
+                                        tD += i[0] - tOld
+                                else:
+                                        tD += (self.tauCa) * log(caTotOld / self.thetaD)
+                        if caTotOld > self.thetaP:
+                                if caTotTemp > self.thetaP:
+                                        tP += i[0] - tOld
+                                else:
+                                        tP += (self.tauCa) * log(caTotOld / self.thetaP)
+                        # postsynaptic spike
+                        if i[1] == 1:
+                                caPostTemp += i[2]
+                                post += 1
+                        # presynaptic spike
+                        if i[1] == 0:
+                                caPreTemp += i[2]
+                                pre += 1
+                        caTotTemp = caPreTemp + caPostTemp
+                        ca.append([caTotTemp, caPreTemp, caPostTemp, i[0]])
+                #
+                # pdb.set_trace()
+                return (tD , tP )
+        ###############################################################################
+        # (timeD,timeP) = tat.spikePairFrequencyNonlinear(DeltaTStart,DeltaTEnd,D,frequency)
+        def spikePairFrequencyTMM(self, deltaT, freq, Npres, U, tauFac, tauDep ):
+                tStart = 0.1  # start time at 100 ms
+
+                #Npres = Npres * 12
+                #timeAbove = zeros((1, 2))
+
+                tD = 0.
+                tP = 0.
+                #random.seed(7)
+                tPre  = arange(Npres) / freq + tStart
+                tPost = tPre + deltaT
+
+                tAll = zeros((2 * Npres, 3))
+
+                cpre = zeros(Npres)
+                u   = zeros(Npres)
+                x   = zeros(Npres)
+                if U != 0:
+                        u[0] = U
+                        x[0] = 1.
+                        cpre[0] = u[0] * x[0]
+                        for i in range(1, len(tPre[1:])):
+                                u[i] = u[i - 1] * exp(-1./(freq*tauFac)) + U * (1. - u[i - 1] * exp(-1./(freq*tauFac)))
+                                x[i] = 1. - (1. - (x[i - 1] - u[i - 1] * x[i - 1])) * exp(
+                                        -1./(freq*tauDep))
+                                cpre[i] = u[i] * x[i]
+                        cpre *= self.Cpre
+                        #cpre[0] = 1.
+                        #for i in range(1, Npres):
+                        #    cpre[i] = 1. - (1. - (cpre[i-1] - U*cpre[i-1]))*exp(-1./(freq * tauRec))
+                        #cpre *= U*self.Cpre
+                else:
+                        cpre[:] = self.Cpre
 
                 #print cpre
                 tAll[:, 0] = hstack((tPre, tPost))

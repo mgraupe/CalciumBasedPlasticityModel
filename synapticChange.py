@@ -13,7 +13,7 @@ class synapticChange():
         class to calculate the change in synaptic strenght 
     '''
     ###############################################################################
-    def __init__(self, plasticityCase,fromFile=False,nonlinear=1.,dataSet='jesper'):
+    def __init__(self, plasticityCase,fromFile=False,nonlinear=1.):
         
         # chose parameters from predefined set or from file
         self.choseParameterSet(plasticityCase,fromFile)
@@ -24,17 +24,31 @@ class synapticChange():
 
         self.Npairs = 5
 
-        if dataSet == 'jesper':
+        if plasticityCase == 'jesper':
             self.tauRec = 0.148919
             self.U = 0.383753
             self.Npresentations = 15
             jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
-        elif dataSet == 'henry':
+        elif plasticityCase == 'henry':
             self.tauRec = 0.525
             self.U = 0.46
             self.Npresentations = 10
             jesperReg = np.loadtxt(dataDir+'henry_regular.dat')
+            jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
+        elif plasticityCase == 'tmmFacilitationJesperCaModel':
+            self.U = 0.15
+            self.tauFac = 1.
+            self.tauDep = 0.05
+            self.Npresentations = 15
+            jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
+            jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
+        elif plasticityCase == 'tmmfacilitationDepressionJesperCaModel':
+            self.U = 0.15
+            self.tauFac = 1.5
+            self.tauDep = 0.3
+            self.Npresentations = 15
+            jesperReg = np.loadtxt(dataDir + 'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
 
         self.xDataReg = jesperReg[:,[0,1]]
