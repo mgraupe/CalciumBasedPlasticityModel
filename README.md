@@ -62,10 +62,16 @@ python irregularPairs_nonlinear-Ca-Model.py
 python Graupner2016JNeurosci_nonlinearCaModel.py
 ```
 
-Equivalently, for the calcium dynamics model with short-term plasticity
+Equivalently, for the calcium dynamics model with short-term plasticity for the somatosensory cortex plasticity data (Markram et al. 1997, Science)
 ```python
-python irregularPairs_stp-Ca-Model.py
-python irregularPairs_STPCaModel.py
+python irregularPairs_stp-Ca-Makram-Model.py
+python Graupner2018_STPMarkramCaModel.py
+```
+
+Or for the calcium dynamics model with short-term plasticity for the visual cortex plasticity data (Sjoestroem 2001, Neuron)
+```python
+python irregularPairs_stp-Ca-Sjoestroem-Model.py
+python Graupner2018_STPSjoestroemCaModel.py
 ```
 
 Requires
