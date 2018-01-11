@@ -13,7 +13,7 @@ class synapticChange():
         class to calculate the change in synaptic strenght 
     '''
     ###############################################################################
-    def __init__(self, plasticityCase,fromFile=False,nonlinear=1.):
+    def __init__(self, plasticityCase,fromFile=False,nonlinear=1.,dataSet='jesper'):
         
         # chose parameters from predefined set or from file
         self.choseParameterSet(plasticityCase,fromFile)
@@ -21,9 +21,21 @@ class synapticChange():
         # read in experimental data
         dataDir = 'experimental_data/'
         #dataDir = 'experimental_data/'
-        
-        jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
-        jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
+
+        self.Npairs = 5
+
+        if dataSet == 'jesper':
+            self.tauRec = 0.148919
+            self.U = 0.383753
+            self.Npresentations = 15
+            jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
+            jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
+        elif dataSet == 'henry':
+            self.tauRec = 0.525
+            self.U = 0.46
+            self.Npresentations = 10
+            jesperReg = np.loadtxt(dataDir+'henry_regular.dat')
+            jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
 
         self.xDataReg = jesperReg[:,[0,1]]
         self.xDataReg[:,1] = self.xDataReg[:,1]/1000. # everything in sec

@@ -62,6 +62,11 @@ python irregularPairs_nonlinear-Ca-Model.py
 python Graupner2016JNeurosci_nonlinearCaModel.py
 ```
 
+Equivalently, for the calcium dynamics model with short-term plasticity
+```python
+python irregularPairs_stp-Ca-Model.py
+python irregularPairs_STPCaModel.py
+```
 
 Requires
 -----------
