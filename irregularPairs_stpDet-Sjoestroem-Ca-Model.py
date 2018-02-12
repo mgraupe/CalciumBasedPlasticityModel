@@ -28,57 +28,90 @@ from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
 
 
-
 ##########################################################
 def runIrregularPairSimulations(args):
-    dT       = args[0]
-    preRate  = args[1]
+    dT = args[0]
+    preRate = args[1]
     postRate = args[2]
-    p        = args[3]
-    
-    if synChange.Cpre>synChange.Cpost:
-        (alphaD,alphaP) = tat.irregularSpikePairs(dT+synChange.D,preRate,postRate,p,deltaCa)
+    p = args[3]
+
+    if synChange.Cpre > synChange.Cpost:
+        (alphaD, alphaP) = tat.irregularSpikePairs(dT + synChange.D, preRate, postRate, p, deltaCa)
     else:
-        (alphaD,alphaP) = tat.irregularSpikePairs(dT-synChange.D,preRate,postRate,p,deltaCa)
-    synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
-    
+        (alphaD, alphaP) = tat.irregularSpikePairs(dT - synChange.D, preRate, postRate, p, deltaCa)
+    synChange.changeInSynapticStrength(T_total, rho0, alphaD, alphaP)
+
     return synChange.mean
+
 
 ##########################################################
-def runIrregularPairSTPSimulations(args):
-    dT       = args[0]
-    preRate  = args[1]
+def runIrregularPairSTPDeterministicSimulations(args):
+    dT = args[0]
+    preRate = args[1]
     postRate = args[2]
-    p        = args[3]
+    p = args[3]
 
-    (alphaD,alphaP) = tat.irregularSpikePairsSTP(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U)
+    (alphaD, alphaP) = tat.irregularSpikePairsSTPDeterministic(dT - synChange.D, preRate, postRate, p, synChange.tauRec, synChange.U)
 
-    synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
+    synChange.changeInSynapticStrength(T_total, rho0, alphaD, alphaP)
 
     return synChange.mean
+
+
+##########################################################
+def runIrregularPairSTPStochasticSimulations(args):
+    dT = args[0]
+    preRate = args[1]
+    postRate = args[2]
+    p = args[3]
+
+    (alphaD, alphaP) = tat.irregularSpikePairsSTPStochastic(dT - synChange.D, preRate, postRate, p, synChange.tauRec,
+                                                            synChange.U, synChange.Nvesicles)
+
+    synChange.changeInSynapticStrength(T_total, rho0, alphaD, alphaP)
+
+    return synChange.mean
+
 
 ##########################################################
 def runRegularPairSimulations(args):
-    dT       = args[0]
-    preRate  = args[1]
+    dT = args[0]
+    preRate = args[1]
     postRate = args[2]
-    p        = args[3]
-    
-    (alphaD,alphaP) = tat.spikePairFrequencyNonlinear(dT-synChange.D,preRate)
-    synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
-    
+    p = args[3]
+
+    (alphaD, alphaP) = tat.spikePairFrequency(dT - synChange.D, preRate)
+    synChange.changeInSynapticStrength(T_total, rho0, alphaD, alphaP)
+
     return synChange.mean
 
 
 ##########################################################
-def runRegularPairSTPSimulations(args):
+def runRegularPairSTPDeterministicSimulations(args):
     dT = args[0]
     preRate = args[1]
     postRate = args[2]
     p = args[3]
 
     # here alphaD and alphaP are actually the absolute times spent above threshold
-    (alphaD, alphaP) = tat.spikePairFrequencySTP(dT - synChange.D, preRate,synChange.Npairs,synChange.tauRec,synChange.U)
+    (alphaD, alphaP) = tat.spikePairFrequencySTPDeterministic(dT - synChange.D, preRate, synChange.Npairs,
+                                                              synChange.tauRec, synChange.U)
+    # in turn T_total turns into the number of the stimulation pattern presentation
+    synChange.changeInSynapticStrength(synChange.Npresentations, rho0, alphaD, alphaP)
+
+    return synChange.mean
+
+
+##########################################################
+def runRegularPairSTPStochasticSimulations(args):
+    dT = args[0]
+    preRate = args[1]
+    postRate = args[2]
+    p = args[3]
+
+    # here alphaD and alphaP are actually the absolute times spent above threshold
+    (alphaD, alphaP) = tat.spikePairFrequencySTPStochastic(dT - synChange.D, preRate, synChange.Npairs,
+                                                           synChange.tauRec, synChange.U, synChange.Nvesicles)
     # in turn T_total turns into the number of the stimulation pattern presentation
     synChange.changeInSynapticStrength(synChange.Npresentations, rho0, alphaD, alphaP)
 
@@ -98,10 +131,10 @@ nl = 1.  # nonlinearity factor
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
-params = 'stpJesperCaModel'
-dS     = 'jesper'
+parameterSet = 'stpJesperCaModel'
+#dS     = 'jesper'
 
-synChange = synapticChange(params,fromFile=True,nonlinear=nl,dataSet=dS)
+synChange = synapticChange(parameterSet,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
@@ -135,7 +168,7 @@ for i in range(len(deltaT)):
     
     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
 
-    rrr = pool.map(runIrregularPairSTPSimulations,args)
+    rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()
@@ -147,8 +180,8 @@ resultsIrr = resultsIrr[1:]
 if not os.path.exists(outputDir):
     os.makedirs(outputDir)
     
-np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_%s.npy' % params,resultsIrr)
-np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_%s.dat' % params,resultsIrr)
+np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet,resultsIrr)
+np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSet,resultsIrr)
 
 #pdb.set_trace()
 
@@ -180,7 +213,7 @@ for i in range(len(deltaT)):
     
     args = column_stack((ones(nCases)*deltaT[i],ones(nCases)*frequency,ones(nCases)*frequency,ppp))
 
-    rrr = pool.map(runIrregularPairSTPSimulations,args)
+    rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()
@@ -193,8 +226,8 @@ resultsIrr = resultsIrr[1:]
 if not os.path.exists(outputDir):
     os.makedirs(outputDir)
     
-np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_%s.npy' % params,resultsIrr)
-np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_%s.dat' % params,resultsIrr)
+np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.npy' % parameterSet,resultsIrr)
+np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.dat' % parameterSet,resultsIrr)
 
 ##########################################################
 # synaptic change vs Delta T for regular Pairs
@@ -223,7 +256,7 @@ for i in range(len(deltaT)):
     
     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
 
-    rrr = pool.map(runRegularPairSTPSimulations,args)
+    rrr = pool.map(runRegularPairSTPDeterministicSimulations,args)
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()
@@ -232,8 +265,8 @@ for i in range(len(deltaT)):
 
 resultsReg = resultsReg[1:]
 
-np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_%s.npy' % params,resultsReg)
-np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_%s.dat' % params,resultsReg)
+np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet,resultsReg)
+np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSet,resultsReg)
 
 ##################################################################################################
 # synaptic change vs frequency
@@ -261,7 +294,7 @@ for i in range(len(frequencies)):
     
     args = column_stack((deltaTs,ones(nCases)*frequencies[i],ones(nCases)*frequencies[i],ppp))
 
-    rrr = pool.map(runIrregularPairSTPSimulations,args)
+    rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()
@@ -270,6 +303,6 @@ for i in range(len(frequencies)):
 
 results = results[1:]
 
-np.save(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_%s.npy' % params,results)
-np.savetxt(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_%s.dat' % params,results)
+np.save(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.npy' % parameterSet,results)
+np.savetxt(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.dat' % parameterSet,results)
 
