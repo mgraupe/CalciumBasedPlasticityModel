@@ -14,26 +14,26 @@ class synapticChange():
     '''
     ###############################################################################
     def __init__(self, plasticityCase,fromFile=False,nonlinear=1.):
-        
-        # chose parameters from predefined set or from file
-        self.choseParameterSet(plasticityCase,fromFile)
-        
         # read in experimental data
         dataDir = 'experimental_data/'
-        #dataDir = 'experimental_data/'
+
+        # chose parameters from predefined set or from file
+        self.choseParameterSet(plasticityCase, fromFile)
 
         self.Npairs = 5
 
-        if plasticityCase == 'jesper':
+        if plasticityCase == 'stpJesperCaModel':
             self.tauRec = 0.148919
             self.U = 0.383753
             self.Npresentations = 15
+            self.Nvesicles = 15
             jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'henry':
+        elif plasticityCase == 'stpHenryCaModel':
             self.tauRec = 0.525
             self.U = 0.46
             self.Npresentations = 10
+            self.Nvesicles = 15
             jesperReg = np.loadtxt(dataDir+'henry_regular.dat')
             jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
         elif plasticityCase == 'tmmFacilitationJesperCaModel':
@@ -50,6 +50,8 @@ class synapticChange():
             self.Npresentations = 15
             jesperReg = np.loadtxt(dataDir + 'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
+
+
 
         self.xDataReg = jesperReg[:,[0,1]]
         self.xDataReg[:,1] = self.xDataReg[:,1]/1000. # everything in sec
