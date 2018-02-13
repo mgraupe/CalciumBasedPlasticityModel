@@ -531,7 +531,7 @@ class timeAboveThreshold():
 
                 tPostSorted = sorted(tPost, key=lambda tPost: tPost)
                 tPre = asarray(tPre[1:])
-                cpre = zeros(len(tPre))
+
                 #######################################
                 # stochastic STD model implementation
                 #ampStoch = np.zeros((NrepetitionsStoch, len(tPre)))
@@ -567,6 +567,7 @@ class timeAboveThreshold():
                         # event-based integration
                         (timesAbove[r,0], timesAbove[r,1]) = self.eventBasedIntegration(tListSorted)
                         #print r
+
                 alphaD = average(timesAbove[:,0]) / tListSorted[-1][0]
                 alphaP = average(timesAbove[:,1]) / tListSorted[-1][0]
                 # print alphaD, alphaP
@@ -686,8 +687,6 @@ class timeAboveThreshold():
                 #Npres = Npres * 12
                 #timeAbove = zeros((1, 2))
 
-                tD = 0.
-                tP = 0.
                 #random.seed(7)
                 tPre  = arange(Npres) / freq + tStart
                 tPost = tPre + deltaT
@@ -718,6 +717,55 @@ class timeAboveThreshold():
                 (tD, tP) = self.eventBasedIntegration(tListSorted)
 
                 return (tD , tP )
+
+        ###############################################################################
+        def spikePairFrequencySTPStochastic(self, deltaT, freq, Npres, tauRec, pRelease, Nves):
+
+                tStart = 0.1  # start time at 100 ms
+                NrepetitionsStoch = 100
+                q = self.Cpre / Nves
+
+                tPre  = arange(Npres) / freq + tStart
+                tPost = tPre + deltaT
+
+                #######################################
+                # stochastic STD model implementation
+                # ampStoch = np.zeros((NrepetitionsStoch, len(tPre)))
+                timesAbove = zeros((NrepetitionsStoch, 2))
+                # tP = 0.
+                for r in range(NrepetitionsStoch):
+                        Vesicles = ones((len(tPre), Nves))
+                        Release = random.rand(len(tPre), Nves) < pRelease
+                        # VesTimes = transpose(np.tile(tPre, (Nves, 1)))
+                        for i in range(len(tPre)):
+                                nRel = sum(Release[i])
+                                releaseSites = argwhere(Release[i] == True)
+                                emptyTimes = random.exponential(tauRec, nRel)
+                                for n in range(nRel):
+                                        if not Vesicles[i, releaseSites[n]] == 0.:
+                                                recoveryMask = ((tPre - tPre[i]) < emptyTimes[n]) & (
+                                                                (tPre - tPre[i]) > 0)
+                                                Vesicles[recoveryMask, releaseSites[n]] = 0
+                        # print 'after amp det'
+                        cpreStoch = q * (sum(Vesicles * Release, axis=1))
+
+                        ######################################
+                        tAll = zeros((len(tPre) + len(tPost), 3))
+
+                        tAll[:, 0] = hstack((tPre, tPost))
+                        tAll[:, 1] = hstack((zeros(len(tPre)), ones(len(tPost))))
+                        tAll[:, 2] = hstack((cpreStoch, repeat(self.Cpost, len(tPost))))
+                        tList = tAll.tolist()
+                        tListSorted = sorted(tList, key=lambda tList: tList[0])
+
+                        # tListSorted.append([Npres/freq,2])
+
+                        ###########################################################
+                        # event-based integration
+                        (timesAbove[r, 0], timesAbove[r, 1]) = self.eventBasedIntegration(tListSorted)
+                        # print r
+                return (average(timesAbove[:,0]) , average(timesAbove[:,1]) )
+
 
         ###############################################################################
         # (timeD,timeP) = tat.spikePairFrequencyNonlinear(DeltaTStart,DeltaTEnd,D,frequency)

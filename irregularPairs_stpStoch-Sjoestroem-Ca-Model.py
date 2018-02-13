@@ -143,7 +143,7 @@ pool = multiprocessing.Pool()
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 #################################################################################################
-print 'irregular pairs : synaptic change vs Delta T for frequencies p\'s'
+print 'irregular pairs : synaptic change vs Delta T for frequencies p\'s, stochastic STD'
 
 # Parameter of the stimulation protocol
 frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
@@ -188,7 +188,7 @@ np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDStoch_%s.d
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 ##################################################################################################
-print 'irregular pairs : synaptic change vs Delta T for different p\'s'
+print 'irregular pairs : synaptic change vs Delta T for different p\'s, stochastic STD'
 
 # Parameter of the stimulation protocol
 frequency   = 10.   # frequency of spike-pair presentations in pairs/sec
@@ -232,7 +232,7 @@ np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDStoch_%s.dat'
 ##########################################################
 # synaptic change vs Delta T for regular Pairs
 ##########################################################
-print 'regular pairs : synaptic change vs Delta T for frequencies p\'s'
+print 'regular pairs : synaptic change vs Delta T for frequencies p\'s, stochastic STD'
 
 # Parameter of the stimulation protocol
 frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
@@ -271,7 +271,7 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDStoch_%s.dat
 ##################################################################################################
 # synaptic change vs frequency
 ##################################################################################################
-print 'irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s'
+print 'irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s, stochastic STD'
 
 deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
 Freqstart = 0.1    # start time difference between pre- and post-spike, in sec

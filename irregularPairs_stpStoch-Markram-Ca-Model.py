@@ -178,7 +178,7 @@ if not os.path.exists(outputDir):
 np.save(outputDir + 'irregularSpikePairs_vs_deltaT_differentFreqs_STDstoch_%s.npy' % parameterSet, resultsIrr)
 np.savetxt(outputDir + 'irregularSpikePairs_vs_deltaT_differentFreqs_STDstoch_%s.dat' % parameterSet, resultsIrr)
 
-pdb.set_trace()
+#pdb.set_trace()
 
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
@@ -224,44 +224,44 @@ if not os.path.exists(outputDir):
 np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDstoch_%s.npy' % parameterSet,resultsIrr)
 np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDstoch_%s.dat' % parameterSet,resultsIrr)
 
-# ##########################################################
-# # synaptic change vs Delta T for regular Pairs
-# ##########################################################
-# print 'regular pairs : synaptic change vs Delta T for frequencies p\'s'
-#
-# # Parameter of the stimulation protocol
-# frequencies   = array([1.,2.,5.,10.,20.,40.])   # frequency of spike-pair presentations in pairs/sec
-# DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
-# DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
-# DeltaTsteps =  101.  # steps between start and end value
-# ppp         = 1.
-#
-# nCases = len(frequencies)
-#
-# ###########################################################
-# # initialize arrays
-# deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
-# resultsReg = zeros(len(frequencies)*3+2)
-#
-# ###########################################################
-# # simulation loop over range of deltaT values
-# for i in range(len(deltaT)):
-#     #
-#     print 'deltaT : ', deltaT[i]
-#
-#     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
-#
-#     rrr = pool.map(runRegularPairSTPDeterministicSimulations,args)
-#     #for n in range(len(frequencies)):
-#     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
-#     #pdb.set_trace()
-#     res1 = hstack((deltaT[i],frequencies,frequencies,ppp,rrr))
-#     resultsReg = vstack((resultsReg,res1))
-#
-# resultsReg = resultsReg[1:]
-#
-# np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_%s.npy' % parameterSet,resultsReg)
-# np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_%s.dat' % parameterSet,resultsReg)
+##########################################################
+# synaptic change vs Delta T for regular Pairs
+##########################################################
+print 'regular pairs : synaptic change vs Delta T for frequencies p\'s'
+
+# Parameter of the stimulation protocol
+frequencies   = array([1.,2.,5.,10.,20.,40.])   # frequency of spike-pair presentations in pairs/sec
+DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
+DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
+DeltaTsteps =  101.  # steps between start and end value
+ppp         = 1.
+
+nCases = len(frequencies)
+
+###########################################################
+# initialize arrays
+deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
+resultsReg = zeros(len(frequencies)*3+2)
+
+###########################################################
+# simulation loop over range of deltaT values
+for i in range(len(deltaT)):
+    #
+    print 'deltaT : ', deltaT[i]
+
+    args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
+
+    rrr = pool.map(runRegularPairSTPStochasticSimulations,args)
+    #for n in range(len(frequencies)):
+    #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
+    #pdb.set_trace()
+    res1 = hstack((deltaT[i],frequencies,frequencies,ppp,rrr))
+    resultsReg = vstack((resultsReg,res1))
+
+resultsReg = resultsReg[1:]
+
+np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDstoch_%s.npy' % parameterSet,resultsReg)
+np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDstoch_%s.dat' % parameterSet,resultsReg)
 
 ##################################################################################################
 # synaptic change vs frequency
