@@ -758,6 +758,8 @@ class timeAboveThreshold():
                         tList = tAll.tolist()
                         tListSorted = sorted(tList, key=lambda tList: tList[0])
 
+                        tListSorted.append([Npres / freq + tStart, 2, 0])
+
                         # tListSorted.append([Npres/freq,2])
 
                         ###########################################################

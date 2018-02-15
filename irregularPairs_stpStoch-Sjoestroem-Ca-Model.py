@@ -26,6 +26,8 @@ import pdb
 
 from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
+#from runPlasticitySimulations import runPlasticitySimulations
+
 
 
 ##########################################################
@@ -138,6 +140,8 @@ synChange = synapticChange(parameterSet,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
+runSim    = runPlasticitySimulations(synChange,tat,T_total,rho0)
+
 pool = multiprocessing.Pool()
 
 ##################################################################################################
@@ -167,6 +171,9 @@ for i in range(len(deltaT)):
     print 'deltaT : ', deltaT[i]
     
     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
+    #n = 2
+    #argss = (deltaT[i],frequencies[n],frequencies[n],ppp)
+    #runSim.runIrregularPairSTPStochasticSimulations(argss)
 
     rrr = pool.map(runIrregularPairSTPStochasticSimulations,args)
     #for n in range(len(frequencies)):
@@ -213,7 +220,7 @@ for i in range(len(deltaT)):
     
     args = column_stack((ones(nCases)*deltaT[i],ones(nCases)*frequency,ones(nCases)*frequency,ppp))
 
-    rrr = pool.map(runIrregularPairSTPStochasticSimulations,args)
+    rrr = pool.map(runSim.runIrregularPairSTPStochasticSimulations,args)
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()
@@ -256,7 +263,7 @@ for i in range(len(deltaT)):
     
     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
 
-    rrr = pool.map(runRegularPairSTPStochasticSimulations,args)
+    rrr = pool.map(runSim.runRegularPairSTPStochasticSimulations,args)
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()
@@ -294,7 +301,7 @@ for i in range(len(frequencies)):
     
     args = column_stack((deltaTs,ones(nCases)*frequencies[i],ones(nCases)*frequencies[i],ppp))
 
-    rrr = pool.map(runIrregularPairSTPStochasticSimulations,args)
+    rrr = pool.map(runSim.runIrregularPairSTPStochasticSimulations,args)
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()

@@ -30,14 +30,14 @@ darkyellow = '#ff9f00'
 
 ##############################################################
 
-par = 'stpHenryCaModel'
-dS     = 'henry'
+parameterSet = 'stpJesperCaModel'
+#dS     = 'jesper'
 
 nonlinear = 1.
 w0 = 0.5
 
 #
-synChange = synapticChange(par,fromFile=True,nonlinear=nonlinear,dataSet=dS)
+synChange = synapticChange(parameterSet,fromFile=True,nonlinear=nonlinear)
 
 # initialize class which calculates the time the calcium trace spends above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP,nonlinear=nonlinear)
@@ -50,6 +50,7 @@ sChange = zeros((len(freq),2))
 sChangeStoch = zeros((len(freq)))
 #synChangeStochOld = zeros((len(freq)))
 
+
 deltaTs = linspace(-0.05,0.05,1001)
 sChange2 = zeros(len(deltaTs))
 
@@ -57,14 +58,14 @@ for i in range(len(freq)):
     #
     # pre-post delta t = 10 ms
     # here alphaD and alphaP are actually the absolute times spent above threshold
-    (alphaD, alphaP) = tat.spikePairFrequencySTP(0.01 - synChange.D, freq[i], synChange.Npairs, synChange.tauRec,synChange.U)
+    (alphaD, alphaP) = tat.spikePairFrequencySTPDeterministic(0.01 - synChange.D, freq[i], synChange.Npairs, synChange.tauRec,synChange.U)
     synChange.changeInSynapticStrength(synChange.Npresentations, w0, alphaD, alphaP)
     #(alphaD,alphaP) = tat.spikePairFrequencyNonlinear(0.01-synChange.D,freq[i])
     #synChange.changeInSynapticStrength(Npresentations/freq[i],w0,alphaD,alphaP)
     sChange[i,0] = synChange.mean/w0
     #
     # post-pre delta t = -10 ms
-    (alphaD, alphaP) = tat.spikePairFrequencySTP(-0.01 - synChange.D, freq[i], synChange.Npairs, synChange.tauRec,synChange.U)
+    (alphaD, alphaP) = tat.spikePairFrequencySTPDeterministic(-0.01 - synChange.D, freq[i], synChange.Npairs, synChange.tauRec,synChange.U)
     synChange.changeInSynapticStrength(synChange.Npresentations, w0, alphaD, alphaP)
     #(alphaD,alphaP) = tat.spikePairFrequencyNonlinear(-0.01-synChange.D,freq[i])
     #synChange.changeInSynapticStrength(Npresentations/freq[i],w0,alphaD,alphaP)
@@ -72,12 +73,12 @@ for i in range(len(freq)):
     #
     # stochastic sjoestroem protocol
     # spikePairFrequencySTPStochastic(self, DeltaTStart, DeltaTEnd, freq, Npres, tauRec, U):
-    (alphaD,alphaP) = tat.spikePairFrequencySTPStochastic((-0.015-synChange.D),(0.015-synChange.D),freq[i],synChange.Npairs, synChange.tauRec,synChange.U)
+    (alphaD,alphaP) = tat.spikePairStochasticFrequencySTPDeterministic((-0.015-synChange.D),(0.015-synChange.D),freq[i],synChange.Npairs, synChange.tauRec,synChange.U)
     synChange.changeInSynapticStrength(synChange.Npresentations,w0,alphaD,alphaP)
     sChangeStoch[i] = synChange.mean/w0
     
 for i in range(len(deltaTs)):
-    (alphaD, alphaP) = tat.spikePairFrequencySTP(deltaTs[i] - synChange.D, 0.1 , synChange.Npairs, synChange.tauRec,synChange.U)
+    (alphaD, alphaP) = tat.spikePairFrequencySTPDeterministic(deltaTs[i] - synChange.D, 0.1 , synChange.Npairs, synChange.tauRec,synChange.U)
     synChange.changeInSynapticStrength(synChange.Npresentations, w0, alphaD, alphaP)
     #(alphaD,alphaP) = tat.spikePairFrequencyNonlinear(deltaTs[i]-synChange.D,0.1)
     #synChange.changeInSynapticStrength(Npresentations/0.1,0.5,alphaD,alphaP)
@@ -143,7 +144,7 @@ gssub0 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=gs[0],hspace=0.2,ws
 ax0 = plt.subplot(gssub0[0])
         
 
-ax0.set_title('Markram : regular pairs (50 pairs)')
+ax0.set_title('Sjoestroem : regular pairs (75 pairs)')
 ax0.axhline(y=1.,c='0.7')
 plusMask = synChange.xDataReg[:,1] > 0.
 minusMask = synChange.xDataReg[:,1] < 0.
@@ -172,7 +173,7 @@ plt.xlabel(r'frequency (Hz)')
 ##############################################################
 # regular sjoestroem data 
 ax4 = plt.subplot(gssub0[1])
-ax4.set_title('stochastic pairs (50 pairs)')
+ax4.set_title('Sjoestroem : stochastic pairs (75 pairs)')
 
 # diplay of data
 ax4.axhline(y=1.,c='0.7')
@@ -197,7 +198,7 @@ plt.xlabel('frequency (Hz)')
 ########################################################
 # stdp at low frequency 
 ax1 = plt.subplot(gssub0[2])
-ax1.set_title(r'Spike-pairs vs. $\Delta t$ (50 pairs)')
+ax1.set_title(r'Spike-pairs vs. $\Delta t$ (75 pairs)')
 
 ax1.axhline(y=1.,c='0.7')
 ax1.plot(deltaTs*1000.,sChange2,lw=2,color='k')
@@ -222,23 +223,21 @@ plt.xlabel(r'$\Delta t$ (ms)')
 #leg = plt.gca().get_legend()
 #ltext  = leg.get_texts()
 #plt.setp(ltext, fontsize=9)
-######################################################################################
 
 gssub1 = gridspec.GridSpecFromSubplotSpec(2, 3, subplot_spec=gs[1],hspace=0.2,wspace=0.2)
 
 dir0 = 'simResults/'
 
 
-irrPairsDT = np.load(dir0+'irregularSpikePairs_vs_deltaT_differentFreqs_%s.npy' % par)
-regPairsDT = np.load(dir0+'regularSpikePairs_vs_deltaT_differentFreqs_%s.npy' % par)
+irrPairsDT = np.load(dir0+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet)
+regPairsDT = np.load(dir0+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet)
 
-irrPairsP = np.load(dir0+'irregularSpikePairs_vs_deltaT_differentPs_%s.npy' % par)
 
 argM = argmin((irrPairsDT[:,0]+0.01)**2)
 argP = argmin((irrPairsDT[:,0]-0.01)**2)
 
 ul = 1.8
-ll = 0.1
+ll = 0.5
 
 ax80 = plt.subplot(gssub1[0])
 
@@ -261,7 +260,6 @@ plt.xlim(-80,80)
 plt.ylim(ll,ul)
 
 ax81 = plt.subplot(gssub1[1])
-
 
 idx = 2
 ax81.set_title(r'irregular pairs vs. $\Delta t$ (10 sec)'+'\n'+ '%s Hz' % irrPairsDT[0,idx])
@@ -293,13 +291,7 @@ ax82.axvline(x=0,color='0.4',ls='--')
 
 
 mask = (regPairsDT[:,0] > -1./(2.*irrPairsDT[0,idx])) & (regPairsDT[:,0] < 1./(2.*irrPairsDT[0,idx]))
-#ax82.plot(irrPairsP[:,0]*1000.,irrPairsP[:,12]/w0,lw=2)#,c='cyan')
-#ax82.plot(irrPairsP[:,0]*1000.,irrPairsP[:,11]/w0,lw=2)#,c='cyan')
-#ax82.plot(irrPairsP[:,0]*1000.,irrPairsP[:,10]/w0,lw=2)#,c='cyan')
-#ax82.plot(irrPairsP[:,0]*1000.,irrPairsP[:,9]/w0,lw=2)#,c='cyan')
-#ax82.plot(irrPairsP[:,0]*1000.,irrPairsP[:,8]/w0,lw=2)#,c='cyan')
 ax82.plot(irrPairsDT[:,0]*1000.,irrPairsDT[:,16]/w0,lw=2,c=darkyellow)
-
 ax82.plot(regPairsDT[:,0][mask]*1000.,regPairsDT[:,16][mask]/w0,lw=2,c='blue')
 #ax82.plot(irrPairsDT[argM,0]*1000.,irrPairsDT[:,16][argM]/w0,'o',c='k')
 #ax82.plot(irrPairsDT[argP,0]*1000.,irrPairsDT[:,16][argP]/w0,'o',c='k')
@@ -390,10 +382,10 @@ plt.xlim(-80,80)
 plt.ylim(ll,ul)
 plt.xticks([-50, 0, 50],[-50, 0, 50])
 
-###########################################################################################################
+#################################################################################
 gssub2 = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=gs[2],hspace=0.2,wspace=0.3)
 
-irrPairsFreq = np.load(dir0+'irregularSpikePairs_vs_rate_differentDeltaTs_%s.npy' % par)
+irrPairsFreq = np.load(dir0+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.npy' % parameterSet)
 
 
 ax12 = plt.subplot(gssub2[0])
@@ -418,11 +410,10 @@ ax12.spines['left'].set_position(('outward', 10))
 ax12.yaxis.set_ticks_position('left')
 ax12.xaxis.set_ticks_position('bottom')
 
-ax12.set_xlim(0,20)
-
 ax12.set_ylabel('change in synaptic strength')
 ax12.set_xlabel('rate (spk/sec)')
 
+####################
 ########################################
 ax1 = plt.subplot(gssub2[1])
 
@@ -441,7 +432,7 @@ ax1.spines['bottom'].set_position(('outward', 10))
 ax1.spines['left'].set_position(('outward', 10))
 ax1.yaxis.set_ticks_position('left')
 ax1.xaxis.set_ticks_position('bottom')
-ax1.set_xlim(0,20)
+ax1.set_xlim(0,80)
 #plt.ylim(lls,uls)
 #plt.xticks([-50, 0, 50],[-50, 0, 50])
 ax1.set_ylabel('sensitivity to correlations')
@@ -461,7 +452,7 @@ NN = 1001
 rateMatrix = zeros((NN, NN))
 # pdb.set_trace()
 for i in range(NN):
-    rateMatrix[:, i] = linspace(0.1, 2. * 10., 2 * NN)[i:(i + NN)]
+    rateMatrix[:, i] = linspace(0.1, 2. * 40., 2 * NN)[i:(i + NN)]
 
 # pdb.set_trace()
 
@@ -505,7 +496,7 @@ cb.update_ticks()
 # ax1.text(32, 38, "100 %",color='w', va="center", ha="center")
 # ax1.text(35, 9, "20 %",color='w', va="center", ha="center")
 
-ax1.text(8, 10.5, '     change in \nsynaptic strength')
+ax1.text(32, 42., '     change in \nsynaptic strength')
 
 ax1.spines['top'].set_visible(False)
 ax1.spines['right'].set_visible(False)
@@ -513,8 +504,8 @@ ax1.spines['bottom'].set_position(('outward', 10))
 ax1.spines['left'].set_position(('outward', 10))
 ax1.yaxis.set_ticks_position('left')
 ax1.xaxis.set_ticks_position('bottom')
-plt.xlim(0, 10)
-plt.ylim(0, 10)
+plt.xlim(0, 40)
+plt.ylim(0, 40)
 # plt.xticks([-50, 0, 50],[-50, 0, 50])
 plt.ylabel('increase in firing rate (spk/s)', multialignment='center')
 plt.xlabel('baseline firing rate (spk/s)')
@@ -525,6 +516,9 @@ majorLocator_y = MaxNLocator(4)
 ax1.yaxis.set_major_locator(majorLocator_y)
 ax1.xaxis.set_major_locator(majorLocator_y)
 
+
+
+#ax12.set_xlim(0,40)
 
 #tauCa = sol[0][0]
 #Cpre  = sol[0][1]
@@ -545,14 +539,13 @@ ax1.xaxis.set_major_locator(majorLocator_y)
 
 #synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP
 #ax12.text(70,1.1,ttt % (sol[1],sol[0][0],sol[0][1],sol[0][2],thetaD,sol[0][3],sol[0][4],sol[0][5],sol[0][6],sol[0][7]))
-#ax12.text(25,1.1,ttt % (synChange.mse,synChange.tauCa,synChange.Cpre,synChange.Cpost,synChange.thetaD,synChange.thetaP,synChange.gammaD,synChange.gammaP,synChange.tau,synChange.D))
+#ax12.text(90,1.1,ttt % (synChange.mse,synChange.tauCa,synChange.Cpre,synChange.Cpost,synChange.thetaD,synChange.thetaP,synChange.gammaD,synChange.gammaP,synChange.tau,synChange.D))
 
 #lll = plt.legend(frameon=True,loc=4)
 #frame = lll.get_frame()
 #frame.set_edgecolor('white')
 
 #plt.xlim(0,100)
-
 
 
 
