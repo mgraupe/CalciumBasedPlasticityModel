@@ -36,14 +36,14 @@ class synapticChange():
             self.Nvesicles = 15
             jesperReg = np.loadtxt(dataDir+'henry_regular.dat')
             jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'JesperCaModel' : # without STD
+        elif plasticityCase == 'JesperCaModel' or plasticityCase == 'sJFullNoSTDSim0' : # without STD
             self.tauRec = 0.148919
             self.U = 0
             self.Npresentations = 15
             self.Nvesicles = 15
             jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'HenryCaModel2': # without STD
+        elif plasticityCase == 'HenryCaModel2' or  plasticityCase == 'sHFullNoSTDSim1': # without STD
             self.tauRec = 0.525
             self.U = 0
             self.Npresentations = 10
