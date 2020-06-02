@@ -2,7 +2,8 @@ from scipy import *
 from numpy import *
 import pdb
 import sys
-import commands
+import subprocess
+#import commands
 
 class timeAboveThreshold():
         ''' 
@@ -78,8 +79,8 @@ class timeAboveThreshold():
                                 elif ( A <= Ct and B <= Ct and D <= Ct and C <= Ct ) :
                                         I = 0.
                                 else :
-                                        print A, B, C, D, Ct, frequency, deltaT 
-                                        print "post-pre : Problem in spikePairFrequency!"
+                                        print(A, B, C, D, Ct, frequency, deltaT)
+                                        print("post-pre : Problem in spikePairFrequency!")
                                         sys.exit(1)
                         # pre-post
                         else:
@@ -98,8 +99,8 @@ class timeAboveThreshold():
                                 elif ( E <= Ct and F <= Ct and G <= Ct and H <= Ct ) :
                                         I = 0.
                                 else :
-                                        print E, F, G, H, Ct, frequency, deltaT
-                                        print "pre-post : Problem in spikePairFrequency! " 
+                                        print(E, F, G, H, Ct, frequency, deltaT)
+                                        print("pre-post : Problem in spikePairFrequency! ")
                                         sys.exit(1)
                         #
                         timeAbove[i] = I
@@ -164,8 +165,8 @@ class timeAboveThreshold():
                                 elif ( A <= Ct and B <= Ct and D <= Ct and C <= Ct ) :
                                         I = 0.
                                 else :
-                                        print A, B, C, D, Ct, frequency, deltaT 
-                                        print "post-pre : Problem in spikePairFrequency!"
+                                        print(A, B, C, D, Ct, frequency, deltaT)
+                                        print ("post-pre : Problem in spikePairFrequency!")
                                         sys.exit(1)
                         # pre-post
                         else:
@@ -184,8 +185,8 @@ class timeAboveThreshold():
                                 elif ( E <= Ct and F <= Ct and G <= Ct and H <= Ct ) :
                                         I = 0.
                                 else :
-                                        print E, F, G, H, Ct, frequency, deltaT
-                                        print "pre-post : Problem in spikePairFrequency! " 
+                                        print(E, F, G, H, Ct, frequency, deltaT)
+                                        print("pre-post : Problem in spikePairFrequency! ")
                                         sys.exit(1)
                         #
                         timeAbove[i] = I
@@ -289,8 +290,8 @@ class timeAboveThreshold():
                                 elif ( (A+self.Cpost) <= Ct and O <= Ct and P <= Ct) :
                                         Int = 0.
                                 else :
-                                        print "post-post-pre : Problem !"
-                                        print deltaT, A, (A+self.Cpost), M, N, O, P, Int
+                                        print("post-post-pre : Problem !")
+                                        print(deltaT, A, (A+self.Cpost), M, N, O, P, Int)
                                         sys.exit(1)
                         # post-pre-post 
                         elif ( deltaT >= 0.  and deltaT <= deltaBurst )  :
@@ -324,8 +325,8 @@ class timeAboveThreshold():
                                 elif ( (A+self.Cpost) <= Ct and S <= Ct and T <= Ct) :
                                         Int = 0.
                                 else :
-                                        print "post-pre-post : Problem !"
-                                        print deltaT, A, Q, R, (A+self.Cpost), S, T, Int 
+                                        print("post-pre-post : Problem !")
+                                        print(deltaT, A, Q, R, (A+self.Cpost), S, T, Int)
                                         sys.exit(1)
                         # pre-post-post 
                         elif ( deltaT >= 0.  and deltaT > deltaBurst)  :
@@ -359,11 +360,11 @@ class timeAboveThreshold():
                                 elif ( (A+self.Cpre) <= Ct  and W <= Ct and X <= Ct ) :
                                         Int = 0.
                                 else :
-                                        print "pre-post-post : Problem !"
-                                        print deltaT, A, (A+self.Cpre), U, V, W, X, Int
+                                        print("pre-post-post : Problem !")
+                                        print(deltaT, A, (A+self.Cpre), U, V, W, X, Int)
                                         sys.exit(1)
                         else :
-                                print "Problem in preSpikePostPair routine!"
+                                print("Problem in preSpikePostPair routine!")
                                 sys.exit(1)
                         #
                         timeAbove[i] = Int
@@ -385,7 +386,10 @@ class timeAboveThreshold():
                             arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpre) + ' ' + str(self.Cpost) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
         
                     #print arguments
-                    (out,err) = commands.getstatusoutput('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments) 
+                    # depcreciated in python 3
+                    # (out,err) = commands.getstatusoutput('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments)
+                    tt = subprocess.check_output('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments)
+                    pdb.set_trace()
                     alphaD = float(err.split()[0])
                     alphaP = float(err.split()[1])
                     
@@ -496,7 +500,174 @@ class timeAboveThreshold():
                 # print alphaD, alphaP
 
                 return (alphaD, alphaP)
+        ###############################################################################
+        # irregular spike-pairs and deterministic short-term plasticity, event-based integration of calcium and synaptic strength
+        # tat.irregularSpikePairsSTPDeterminisitcFullSim(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U,T_total,rho0,synChange.gammaD,synChange.gammaP)
+        def irregularSpikePairsSTPDeterminisitcFullSim(self, deltaT, preRate, postRate, ppp, tauRec, U, T_total, rho0, tau, gammaD, gammaP):
 
+                Nrepetitions = 10000
+
+                # construction of the spike train
+                # tStart = 0.1 # start time at 100 ms
+                #random.seed(7)
+                wFinal = []
+                for n in range(Nrepetitions):
+                        #print(n)
+                        tPre = []
+                        tPostCorr = []
+                        tPostInd = []
+
+                        tPre.append(0)
+                        tPostInd.append(0)
+
+                        for i in range(100000):
+                                tPre.append(tPre[-1] + random.exponential(1. / preRate))
+                                if (postRate - ppp * preRate) > 0.:
+                                        tPostInd.append(tPostInd[-1] + random.exponential(1. / (postRate - ppp * preRate)))
+                                if tPre[-1]>=T_total: # abort of end of simulation is reached
+                                        tPre = tPre[:-1]
+                                        break
+                                if rand() < ppp:
+                                        tPostCorr.append(tPre[-1] + deltaT)
+
+                        tPost = tPostCorr + tPostInd[1:]
+                        tPre = tPre[1:]
+
+                        tPostSorted = sorted(tPost, key=lambda tPost: tPost)
+                        tPostSorted = [item for item in tPostSorted if (item>0. and item<T_total)] # remove negative time points, which can occur due to negative delta t values
+
+                        tAll = zeros((len(tPre) + len(tPostSorted), 2))
+
+                        tAll[:, 0] = hstack((tPre, tPostSorted))
+                        tAll[:, 1] = hstack((zeros(len(tPre)), ones(len(tPostSorted))))
+                        tList = tAll.tolist()
+                        tListSorted = sorted(tList, key=lambda tList: tList[0])
+                        tListSorted.append([T_total, 2])
+                        dynamics = self.fullEventBasedSimulation(tListSorted,rho0,tau,gammaD,gammaP,tauRec, U)
+                        wFinal.append(dynamics[-1][5])
+                        #pdb.set_trace()
+                #
+                #dyn = asarray(dyn)
+                #plt.plot(dyn[:,0])
+                #plt.show()
+                #pdb.set_trace()
+
+                return mean(wFinal)
+        ###############################################################################
+        #synCh = tat.regularSpikePairsSTPDeterminisitcFullSim(dT - synChange.D, preRate, postRate, p, synChange.tauRec, synChange.U, T_total, rho0, synChange.tau, synChange.gammaD,synChange.gammaP)
+        def regularSpikePairsSTPDeterminisitcFullSim(self,deltaT, preRate, postRate, ppp, tauRec, U, T_total, rho0, tau, gammaD, gammaP):
+                # set timing of spikes
+                tStart = 0.15  # start time at 100 ms
+                # Npres = Npres * 12
+
+                Npairs = int(T_total*preRate)
+
+                #tStartPacket = tStart + arange(Npres) * presentationInterval
+                #tStartPacket = repeat(tStartPacket, Npairs)
+                tPre = tStart + arange(Npairs) / preRate
+                tPost = tPre + deltaT
+
+                tAll = zeros((2 * Npairs, 2))
+
+                # print cpre
+                tAll[:, 0] = hstack((tPre, tPost))
+                tAll[:, 1] = hstack((zeros(Npairs), ones(Npairs )))
+                # tAll[:, 2] = hstack((cpre,repeat(self.Cpost,Npres)))
+                tList = tAll.tolist()
+                # sort list to pre- and post spike according to increasing spike time
+                tListSorted = sorted(tList, key=lambda tList: tList[0])
+                # ad an additional time point (t > t_pre,t_post) to evaluate the dynamics after the last spike
+                tListSorted.append([T_total, 2])
+
+                dynamics = self.fullEventBasedSimulation(tListSorted,rho0,tau,gammaD,gammaP,tauRec, U)
+                #pdb.set_trace()
+                return dynamics[-1][5]
+
+        ###############################################################################
+        # run the full event based simulation tracking calcium and synaptic weigth
+        def fullEventBasedSimulation(self,tListSorted,rho0,tau,gammaD,gammaP,tauRec, U):
+                # determine w dynamics parameters based on gammaP, gammaD, and tau
+                # for dynamics above thetaD and below thetaP
+                w_bar_D = 0.
+                tau_prime_D = tau / gammaD
+                # for dynamics above thetaP
+                w_bar_PD = gammaP / (gammaP + gammaD)
+                tau_prime_PD = tau / (gammaP + gammaD)
+
+                # run simulation
+                dyn = []
+                # CaTotal, CaPre, x ... preResources, CaPost, time, w
+                dyn.append([0., 0., 1., 0., 0., rho0])
+                pre = 0
+                post = 0
+                tpreOld = None
+                for i in tListSorted:
+                        #
+                        caTotOld = dyn[-1][0]
+                        caPreOld = dyn[-1][1]
+                        caPreSTDOld = dyn[-1][2]
+                        caPostOld = dyn[-1][3]
+                        tOld = dyn[-1][4]
+                        w = dyn[-1][5]
+                        # caTotTemp  = caTotOld*exp(-(i[0]-tOld)/self.tauCa)
+                        caPreTemp = caPreOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caPostTemp = caPostOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caTotTemp = caPreTemp + caPostTemp
+                        # time above potentiation threshold
+                        if caTotOld > self.thetaP:
+                                tendP = i[0] if (caTotTemp > self.thetaP) else ((self.tauCa) * log(caTotOld / self.thetaP) + tOld)
+                                high = True
+                        else:
+                                high = False
+                        # time above depression threshold
+                        if (caTotOld > self.thetaD) and (caTotTemp < self.thetaP):
+                                tstartD = tOld if (caTotOld < self.thetaP) else ((self.tauCa) * log(caTotOld / self.thetaP) + tOld)
+                                tendD = i[0] if (caTotTemp > self.thetaD) else ((self.tauCa) * log(caTotOld / self.thetaD) + tOld)
+                                low = True
+                        else:
+                                low = False
+                        # time below both thresholds
+                        if (caTotOld < self.thetaD) or (caTotTemp < self.thetaD):
+                                tstartDet = tOld if (caTotOld < self.thetaD) else ((self.tauCa) * log(caTotOld / self.thetaD) + tOld)
+                                deterministic = True
+                        else:
+                                deterministic = False
+                        # performing update of w
+                        if high:
+                                w = w_bar_PD + (w - w_bar_PD) * exp(-(tendP - tOld) / tau_prime_PD)
+                        if low:
+                                w = w_bar_D + (w - w_bar_D) * exp(-(tendD - tstartD) / tau_prime_D)
+                        if deterministic:
+                                # possible update of w below thresholds in case of double-well or piecewise quadratic potential
+                                # w = ...
+                                # no update required for flat potential - line-attractor
+                                pass
+                        # postsynaptic spike
+                        if i[1] == 1:
+                                caPostTemp += self.Cpost + self.eta * caPreTemp
+                                post += 1
+                                caPreSTDTemp = caPreSTDOld
+                        # presynaptic spike
+                        # note that the influence of the presynaptically evoked calcium transient depends on w
+                        if i[1] == 0:
+                                if U != 0:
+                                        caPreSTDTemp = 1. if (tpreOld is None) else (1. - (1. - (caPreSTDOld - U * caPreSTDOld)) * exp(-(i[0] - tpreOld) / tauRec))
+                                        caPreTemp += w * U * self.Cpre * caPreSTDTemp
+                                else:
+                                        caPreTemp += w * self.Cpre
+                                pre += 1
+                                tpreOld = i[0]
+                        try :
+                                caPreSTDTemp
+                        except NameError:
+                                caPreSTDTemp = caPreSTDOld
+                        else:
+                                pass
+
+                        caTotTemp = caPreTemp + caPostTemp
+                        dyn.append([caTotTemp, caPreTemp, caPreSTDTemp, caPostTemp, i[0], w])
+
+                return dyn
         ###############################################################################
         # irregular spike-pairs and deterministic short-term plasticity, event-based integration
         def irregularSpikePairsSTPStochastic(self, deltaT, preRate, postRate, ppp, tauRec, pRelease, Nves):
