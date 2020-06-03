@@ -130,9 +130,11 @@ nl = 1.  # nonlinearity factor
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
-parameterSet = 'sHFullNoSTDSim1'
+dataCase = 'markram'  # sjoestroem, markram
+parameterSetName = 'sHFullNoSTDSim1'
 
-synChange = synapticChange(parameterSet,fromFile=True,nonlinear=nl)
+
+synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,USTD=0.)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
@@ -178,8 +180,8 @@ resultsIrr = resultsIrr[1:]
 if not os.path.exists(outputDir):
     os.makedirs(outputDir)
 
-np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet,resultsIrr)
-np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSet,resultsIrr)
+np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSetName,resultsIrr)
+np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSetName,resultsIrr)
 
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
@@ -222,8 +224,8 @@ resultsIrr = resultsIrr[1:]
 if not os.path.exists(outputDir):
     os.makedirs(outputDir)
     
-np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.npy' % parameterSet,resultsIrr)
-np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.dat' % parameterSet,resultsIrr)
+np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.npy' % parameterSetName,resultsIrr)
+np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.dat' % parameterSetName,resultsIrr)
 
 ##########################################################
 # synaptic change vs Delta T for regular Pairs
@@ -261,8 +263,8 @@ for i in range(len(deltaT)):
 
 resultsReg = resultsReg[1:]
 
-np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet,resultsReg)
-np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSet,resultsReg)
+np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSetName,resultsReg)
+np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSetName,resultsReg)
 
 ##################################################################################################
 # synaptic change vs frequency
@@ -299,6 +301,6 @@ for i in range(len(frequencies)):
 
 results = results[1:]
 
-np.save(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.npy' % parameterSet,results)
-np.savetxt(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.dat' % parameterSet,results)
+np.save(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.npy' % parameterSetName,results)
+np.savetxt(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.dat' % parameterSetName,results)
 

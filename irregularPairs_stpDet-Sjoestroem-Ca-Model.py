@@ -135,10 +135,10 @@ nl = 1.  # nonlinearity factor
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
-parameterSet = 'sJFullSim0'
-#dS     = 'jesper'
+dataCase = 'sjoestroem'  # sjoestroem, markram, sjoestroemNoSTD, markramNoSTD
+parameterSetName = 'sJFullSim0'
 
-synChange = synapticChange(parameterSet,fromFile=True,nonlinear=nl)
+synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
@@ -147,91 +147,91 @@ pool = multiprocessing.Pool()
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 # #################################################################################################
-# print('irregular pairs : synaptic change vs Delta T for frequencies p\'s')
-#
-# # Parameter of the stimulation protocol
-# frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
-# DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
-# DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
-# DeltaTsteps =  101.  # steps between start and end value
-# ppp         = 1.
-#
-# nCases = len(frequencies)
-#
-#
-# ###########################################################
-# # initialize arrays
-# deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
-# resultsIrr = zeros(len(frequencies)*3+2)
-#
-# ###########################################################
-# # simulation loop over range of deltaT values
-# for i in range(len(deltaT)):
-#     #
-#     print('deltaT : ', deltaT[i])
-#
-#     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
-#
-#     rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
-#     #for n in range(len(frequencies)):
-#     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
-#     #pdb.set_trace()
-#     res1 = hstack((deltaT[i],frequencies,frequencies,ppp,rrr))
-#     resultsIrr = vstack((resultsIrr,res1))
-#
-# resultsIrr = resultsIrr[1:]
-#
-# if not os.path.exists(outputDir):
-#     os.makedirs(outputDir)
-#
-# np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet,resultsIrr)
-# np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSet,resultsIrr)
+print('irregular pairs : synaptic change vs Delta T for frequencies p\'s')
+
+# Parameter of the stimulation protocol
+frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
+DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
+DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
+DeltaTsteps =  101.  # steps between start and end value
+ppp         = 1.
+
+nCases = len(frequencies)
+
+
+###########################################################
+# initialize arrays
+deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
+resultsIrr = zeros(len(frequencies)*3+2)
+
+###########################################################
+# simulation loop over range of deltaT values
+for i in range(len(deltaT)):
+    #
+    print('deltaT : ', deltaT[i])
+
+    args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
+
+    rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
+    #for n in range(len(frequencies)):
+    #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
+    #pdb.set_trace()
+    res1 = hstack((deltaT[i],frequencies,frequencies,ppp,rrr))
+    resultsIrr = vstack((resultsIrr,res1))
+
+resultsIrr = resultsIrr[1:]
+
+if not os.path.exists(outputDir):
+    os.makedirs(outputDir)
+
+np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSetName,resultsIrr)
+np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSetName,resultsIrr)
 
 #pdb.set_trace()
 
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 ##################################################################################################
-# print('irregular pairs : synaptic change vs Delta T for different p\'s')
-#
-# # Parameter of the stimulation protocol
-# frequency   = 10.   # frequency of spike-pair presentations in pairs/sec
-# DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
-# DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
-# DeltaTsteps =  101.  # steps between start and end value
-# ppp         = array([0.1,0.25,0.5,0.75,1.])
-#
-# nCases = len(ppp)
-#
-#
-# ###########################################################
-# # initialize arrays
-# deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
-# resultsIrr = zeros(nCases*2+3)
-#
-# ###########################################################
-# # simulation loop over range of deltaT values
-# for i in range(len(deltaT)):
-#     #
-#     print('deltaT : ', deltaT[i])
-#
-#     args = column_stack((ones(nCases)*deltaT[i],ones(nCases)*frequency,ones(nCases)*frequency,ppp))
-#
-#     rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
-#     #for n in range(len(frequencies)):
-#     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
-#     #pdb.set_trace()
-#     res1 = hstack((deltaT[i],frequency,frequency,ppp,rrr))
-#     resultsIrr = vstack((resultsIrr,res1))
-#
-# resultsIrr = resultsIrr[1:]
-#
-#
-# if not os.path.exists(outputDir):
-#     os.makedirs(outputDir)
-#
-# np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.npy' % parameterSet,resultsIrr)
-# np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.dat' % parameterSet,resultsIrr)
+print('irregular pairs : synaptic change vs Delta T for different p\'s')
+
+# Parameter of the stimulation protocol
+frequency   = 10.   # frequency of spike-pair presentations in pairs/sec
+DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
+DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
+DeltaTsteps =  101.  # steps between start and end value
+ppp         = array([0.1,0.25,0.5,0.75,1.])
+
+nCases = len(ppp)
+
+
+###########################################################
+# initialize arrays
+deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
+resultsIrr = zeros(nCases*2+3)
+
+###########################################################
+# simulation loop over range of deltaT values
+for i in range(len(deltaT)):
+    #
+    print('deltaT : ', deltaT[i])
+
+    args = column_stack((ones(nCases)*deltaT[i],ones(nCases)*frequency,ones(nCases)*frequency,ppp))
+
+    rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
+    #for n in range(len(frequencies)):
+    #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
+    #pdb.set_trace()
+    res1 = hstack((deltaT[i],frequency,frequency,ppp,rrr))
+    resultsIrr = vstack((resultsIrr,res1))
+
+resultsIrr = resultsIrr[1:]
+
+
+if not os.path.exists(outputDir):
+    os.makedirs(outputDir)
+
+np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.npy' % parameterSetName,resultsIrr)
+np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.dat' % parameterSetName,resultsIrr)
 
 ##########################################################
 # synaptic change vs Delta T for regular Pairs
@@ -269,8 +269,8 @@ for i in range(len(deltaT)):
 
 resultsReg = resultsReg[1:]
 
-np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSet,resultsReg)
-np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSet,resultsReg)
+np.save(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSetName,resultsReg)
+np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSetName,resultsReg)
 
 ##################################################################################################
 # synaptic change vs frequency
@@ -307,6 +307,6 @@ for i in range(len(frequencies)):
 
 results = results[1:]
 
-np.save(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.npy' % parameterSet,results)
-np.savetxt(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.dat' % parameterSet,results)
+np.save(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.npy' % parameterSetName,results)
+np.savetxt(outputDir+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet_%s.dat' % parameterSetName,results)
 

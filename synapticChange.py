@@ -13,51 +13,45 @@ class synapticChange():
         class to calculate the change in synaptic strenght 
     '''
     ###############################################################################
-    def __init__(self, plasticityCase,fromFile=False,nonlinear=1.):
+    # synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
+    def __init__(self, dataCase, parameterSetName ,fromFile=False,nonlinear=1.,USTD = None):
         # read in experimental data
         dataDir = 'experimental_data/'
 
         # chose parameters from predefined set or from file
-        self.choseParameterSet(plasticityCase, fromFile)
+        self.choseParameterSet(parameterSetName, fromFile)
         print('parameters : ',self.tauCa, self.Cpre, self.Cpost, self.thetaD, self.thetaP, self.gammaD, self.gammaP, self.sigma, self.tau, self.rhoStar, self.D, self.beta, self.b)
         self.Npairs = 5
 
-        if plasticityCase == 'stpJesperCaModel' or plasticityCase == 'sJFullSim0':
+        if dataCase == 'sjoestroem':
             self.tauRec = 0.148919
-            self.U = 0.383753
+            if USTD is None:
+                self.U = 0.383753
+            else:
+                self.U = USTD
             self.Npresentations = 15
             self.Nvesicles = 15
             jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'stpHenryCaModel' or plasticityCase == 'sHFullSim1':
+        elif dataCase == 'markram':
             self.tauRec = 0.525
-            self.U = 0.46
+            if USTD is None:
+                self.U = 0.46
+            else:
+                self.U = USTD
             self.Npresentations = 10
             self.Nvesicles = 15
             jesperReg = np.loadtxt(dataDir+'henry_regular.dat')
             jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'JesperCaModel' or plasticityCase == 'sJFullNoSTDSim0' : # without STD
-            self.tauRec = 0.148919
-            self.U = 0
-            self.Npresentations = 15
-            self.Nvesicles = 15
-            jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
-            jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'HenryCaModel2' or  plasticityCase == 'sHFullNoSTDSim1': # without STD
-            self.tauRec = 0.525
-            self.U = 0
-            self.Npresentations = 10
-            self.Nvesicles = 15
-            jesperReg = np.loadtxt(dataDir+'henry_regular.dat')
-            jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'tmmFacilitationJesperCaModel':
+
+        elif dataCase == 'tmmFacilitationJesperCaModel':
             self.U = 0.15
             self.tauFac = 1.
             self.tauDep = 0.05
             self.Npresentations = 15
             jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
-        elif plasticityCase == 'tmmfacilitationDepressionJesperCaModel':
+        elif dataCase == 'tmmfacilitationDepressionJesperCaModel':
             self.U = 0.15
             self.tauFac = 1.5
             self.tauDep = 0.3

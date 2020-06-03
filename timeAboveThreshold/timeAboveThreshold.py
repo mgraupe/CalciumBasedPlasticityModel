@@ -505,7 +505,7 @@ class timeAboveThreshold():
         # tat.irregularSpikePairsSTPDeterminisitcFullSim(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U,T_total,rho0,synChange.gammaD,synChange.gammaP)
         def irregularSpikePairsSTPDeterminisitcFullSim(self, deltaT, preRate, postRate, ppp, tauRec, U, T_total, rho0, tau, gammaD, gammaP):
 
-                Nrepetitions = 10000
+                Nrepetitions = 10000 # 10000
 
                 # construction of the spike train
                 # tStart = 0.1 # start time at 100 ms

@@ -130,14 +130,15 @@ outputDir = 'simResults/'
 deltaCa     = 0.0001 #0.01 #  0.0001 
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
-nl = 1.  # nonlinearity factor
+nl = 2.  # nonlinearity factor
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
-dataCase = 'sjoestroem'  # sjoestroem, markram
-parameterSetName = 'sJFullNoSTDSim0'
+dataCase = 'sjoestroem'  # sjoestroem, markram, sjoestroemNoSTD, markramNoSTD
+parameterSetName = 'sJFullNonlinSim0'
+#dS     = 'jesper'
 
-synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,USTD=0.)
+synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
