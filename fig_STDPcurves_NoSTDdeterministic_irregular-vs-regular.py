@@ -30,7 +30,7 @@ darkyellow = '#ff9f00'
 
 ##############################################################
 
-parameterSetVis = 'JesperCaModel'
+parameterSetVis = 'sJFullNoSTDSim0'
 
 nonlinear = 1.
 w0 = 0.5
@@ -42,7 +42,7 @@ w0 = 0.5
 #tatVis = timeAboveThreshold(synChangeVis.tauCa, synChangeVis.Cpre, synChangeVis.Cpost, synChangeVis.thetaD, synChangeVis.thetaP, nonlinear=nonlinear)
 
 
-parameterSetSom = 'HenryCaModel'
+parameterSetSom = 'sHFullNoSTDSim1'
 #dS     = 'jesper'
 
 #synChangeSom = synapticChange(parameterSetSom,fromFile=True,nonlinear=nonlinear)
@@ -449,6 +449,6 @@ plt.xticks([-50, 0, 50],[-50, 0, 50])
 fname = os.path.basename(__file__)
 
 # savefig('ccgs_constant_coupled_networks.svg')
-plt.savefig('outputFigures/' + fname[:-3] + '_v0.pdf')
-plt.savefig('outputFigures/' + fname[:-3] + '_v0.png')  # plt.savefig(fname[:-3]+'_%s.png' % par)
+plt.savefig('outputFigures/' + fname[:-3] + '_v2.pdf')
+plt.savefig('outputFigures/' + fname[:-3] + '_v2.png')  # plt.savefig(fname[:-3]+'_%s.png' % par)
 # plt.savefig('delta_t.png')
