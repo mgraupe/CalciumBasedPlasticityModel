@@ -53,7 +53,7 @@ def runIrregularPairSTPDeterministicSimulations(args):
 
     #print(args)
     #(alphaD,alphaP) = tat.irregularSpikePairsSTPDeterministic(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U)
-    synCh = tat.irregularSpikePairsSTPDeterminisitcFullSim(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U,T_total,rho0,synChange.tau,synChange.gammaD,synChange.gammaP)
+    synCh = tat.irregularSpikePairsSTPDeterminisitcFullSim(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U,T_total,rho0,synChange.tau,synChange.gammaD,synChange.gammaP,Nrepetitions)
     #synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
 
     return synCh
@@ -127,11 +127,12 @@ deltaCa     = 0.0001 #0.01 #  0.0001
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
 nl = 1.  # nonlinearity factor
+Nrepetitions = 1000
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
 dataCase = 'markram'  # sjoestroem, markram
-parameterSetName = 'sHFullSim1'
+parameterSetName = 'sHFullSim3'
 
 
 synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
@@ -261,6 +262,7 @@ for i in range(len(deltaT)):
     #for n in range(len(frequencies)):
     #    (synC[i,n],meanU[i,n],meanD[i,n],tD[i,n],tP[i,n]) = rrr[n]
     #pdb.set_trace()
+
     res1 = hstack((deltaT[i],frequencies,frequencies,ppp,rrr))
     resultsReg = vstack((resultsReg,res1))
 
@@ -275,7 +277,7 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' 
 print('irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s')
 
 deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
-Freqstart = 1.    # start time difference between pre- and post-spike, in sec
+Freqstart = 0.5    # start time difference between pre- and post-spike, in sec
 FreqTend   =  20.    # end time difference between pre- and post-spike, in sec
 FreqSteps =  120  # steps between start and end value
 ppp         = array([0.4,0.2,0.,0.2,0.4])
@@ -283,7 +285,7 @@ ppp         = array([0.4,0.2,0.,0.2,0.4])
 nCases = len(deltaTs)
 
 ###########################################################
-# initialize arrays 
+# initialize arrays
 frequencies = linspace(Freqstart,FreqTend,FreqSteps)
 results = zeros(len(deltaTs)*3+2)
 
@@ -292,7 +294,7 @@ results = zeros(len(deltaTs)*3+2)
 for i in range(len(frequencies)):
     #
     print('rate : ', frequencies[i])
-    
+
     args = column_stack((deltaTs,ones(nCases)*frequencies[i],ones(nCases)*frequencies[i],ppp))
 
     rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)

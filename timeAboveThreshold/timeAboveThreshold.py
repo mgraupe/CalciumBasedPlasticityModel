@@ -503,9 +503,9 @@ class timeAboveThreshold():
         ###############################################################################
         # irregular spike-pairs and deterministic short-term plasticity, event-based integration of calcium and synaptic strength
         # tat.irregularSpikePairsSTPDeterminisitcFullSim(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U,T_total,rho0,synChange.gammaD,synChange.gammaP)
-        def irregularSpikePairsSTPDeterminisitcFullSim(self, deltaT, preRate, postRate, ppp, tauRec, U, T_total, rho0, tau, gammaD, gammaP):
+        def irregularSpikePairsSTPDeterminisitcFullSim(self, deltaT, preRate, postRate, ppp, tauRec, U, T_total, rho0, tau, gammaD, gammaP,Nreps):
 
-                Nrepetitions = 10000 # 10000
+                Nrepetitions = Nreps # 10000
 
                 # construction of the spike train
                 # tStart = 0.1 # start time at 100 ms
@@ -560,18 +560,22 @@ class timeAboveThreshold():
                 tStart = 0.15  # start time at 100 ms
                 # Npres = Npres * 12
 
-                Npairs = int(T_total*preRate)
+                Npairs = int(T_total*preRate)+10
 
                 #tStartPacket = tStart + arange(Npres) * presentationInterval
                 #tStartPacket = repeat(tStartPacket, Npairs)
-                tPre = tStart + arange(Npairs) / preRate
+                tPre = arange(Npairs) / preRate
                 tPost = tPre + deltaT
 
-                tAll = zeros((2 * Npairs, 2))
+                # make sure that all times are larger than zero and smaller than the maximal simulation time
+                tPreRange  = [item for item in tPre if (item>0. and item<T_total)]
+                tPostRange = [item for item in tPost if (item>0. and item<T_total)]
+
+                tAll = zeros((len(tPreRange) + len(tPostRange), 2))
 
                 # print cpre
-                tAll[:, 0] = hstack((tPre, tPost))
-                tAll[:, 1] = hstack((zeros(Npairs), ones(Npairs )))
+                tAll[:, 0] = hstack((tPreRange, tPostRange))
+                tAll[:, 1] = hstack((zeros(len(tPreRange)), ones(len(tPostRange) )))
                 # tAll[:, 2] = hstack((cpre,repeat(self.Cpost,Npres)))
                 tList = tAll.tolist()
                 # sort list to pre- and post spike according to increasing spike time
@@ -579,6 +583,7 @@ class timeAboveThreshold():
                 # ad an additional time point (t > t_pre,t_post) to evaluate the dynamics after the last spike
                 tListSorted.append([T_total, 2])
 
+                #pdb.set_trace()
                 dynamics = self.fullEventBasedSimulation(tListSorted,rho0,tau,gammaD,gammaP,tauRec, U)
                 #pdb.set_trace()
                 return dynamics[-1][5]
@@ -657,6 +662,7 @@ class timeAboveThreshold():
                                         caPreTemp += w * self.Cpre
                                 pre += 1
                                 tpreOld = i[0]
+                        # for the case that it's already the end of the simulation and no presynaptic spike occurred
                         try :
                                 caPreSTDTemp
                         except NameError:

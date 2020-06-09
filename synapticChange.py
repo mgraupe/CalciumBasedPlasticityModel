@@ -14,12 +14,12 @@ class synapticChange():
     '''
     ###############################################################################
     # synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
-    def __init__(self, dataCase, parameterSetName ,fromFile=False,nonlinear=1.,USTD = None):
+    def __init__(self, dataCase, parameterSetName ,fromFile=False,nonlinear=1.,USTD = None,thetaP=None):
         # read in experimental data
         dataDir = 'experimental_data/'
 
         # chose parameters from predefined set or from file
-        self.choseParameterSet(parameterSetName, fromFile)
+        self.choseParameterSet(parameterSetName, fromFile,tP=thetaP)
         print('parameters : ',self.tauCa, self.Cpre, self.Cpost, self.thetaD, self.thetaP, self.gammaD, self.gammaP, self.sigma, self.tau, self.rhoStar, self.D, self.beta, self.b)
         self.Npairs = 5
 
@@ -120,7 +120,7 @@ class synapticChange():
         
     ##########################################################
     # chose parameter set or read file
-    def choseParameterSet(self, plasticityCase,fromFile=False):
+    def choseParameterSet(self, plasticityCase,fromFile=False,tP=None):
         if plasticityCase == 'DP':
             print('DP')
             self.tauCa = 0.02 # in sec
@@ -268,7 +268,7 @@ class synapticChange():
                 self.Cpre  = sol[0][1]
                 self.Cpost = sol[0][2]
                 self.thetaD = 1.
-                self.thetaP = 1.3
+                self.thetaP = tP #1.2885
                 self.gammaD = sol[0][3]
                 self.gammaP = sol[0][4]
                 self.sigma  = 1.

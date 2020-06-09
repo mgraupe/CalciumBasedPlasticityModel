@@ -54,7 +54,7 @@ def runIrregularPairSTPDeterministicSimulations(args):
     # print(args)
     # (alphaD,alphaP) = tat.irregularSpikePairsSTPDeterministic(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U)
     synCh = tat.irregularSpikePairsSTPDeterminisitcFullSim(dT - synChange.D, preRate, postRate, p, synChange.tauRec, synChange.U, T_total, rho0, synChange.tau, synChange.gammaD,
-                                                           synChange.gammaP)
+                                                           synChange.gammaP,Nrepetitions)
     # synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
 
     return synCh
@@ -127,14 +127,16 @@ deltaCa     = 0.0001 #0.01 #  0.0001
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
 nl = 1.  # nonlinearity factor
+Nrepetitions = 100
+thetaP = 1.28848216
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
 dataCase = 'markram'  # sjoestroem, markram
-parameterSetName = 'sHFullNoSTDSim1'
+parameterSetName = 'sHFullNoSTDSim3b'
 
 
-synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,USTD=0.)
+synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,USTD=0.,thetaP=thetaP)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
@@ -272,7 +274,7 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' 
 print('irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s')
 
 deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
-Freqstart = 1.    # start time difference between pre- and post-spike, in sec
+Freqstart = 0.5    # start time difference between pre- and post-spike, in sec
 FreqTend   =  20.    # end time difference between pre- and post-spike, in sec
 FreqSteps =  120  # steps between start and end value
 ppp         = array([0.4,0.2,0.,0.2,0.4])

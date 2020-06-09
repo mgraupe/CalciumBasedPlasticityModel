@@ -54,7 +54,7 @@ def runIrregularPairSTPDeterministicSimulations(args):
     # print(args)
     # (alphaD,alphaP) = tat.irregularSpikePairsSTPDeterministic(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U)
     synCh = tat.irregularSpikePairsSTPDeterminisitcFullSim(dT - synChange.D, preRate, postRate, p, synChange.tauRec, synChange.U, T_total, rho0, synChange.tau, synChange.gammaD,
-                                                           synChange.gammaP)
+                                                           synChange.gammaP,Nrepetitions)
     # synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
 
     return synCh
@@ -127,6 +127,7 @@ deltaCa     = 0.0001 #0.01 #  0.0001
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
 nl = 2.  # nonlinearity factor
+Nrepetitions = 1000
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
