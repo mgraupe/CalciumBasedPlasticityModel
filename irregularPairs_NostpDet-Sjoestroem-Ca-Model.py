@@ -131,7 +131,7 @@ deltaCa     = 0.0001 #0.01 #  0.0001
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
 nl = 1.  # nonlinearity factor
-Nrepetitions = 100
+Nrepetitions = 10000
 thetaP = 1.63069609
 
 ###########################################################

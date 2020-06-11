@@ -42,7 +42,7 @@ w0 = 0.5
 #tatVis = timeAboveThreshold(synChangeVis.tauCa, synChangeVis.Cpre, synChangeVis.Cpost, synChangeVis.thetaD, synChangeVis.thetaP, nonlinear=nonlinear)
 
 
-parameterSetSom = 'sHFullNoSTDSim1'
+parameterSetSom = 'sHFullNoSTDSim1b'
 #dS     = 'jesper'
 
 dir0 = 'simResults/'

@@ -127,13 +127,13 @@ deltaCa     = 0.0001 #0.01 #  0.0001
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
 nl = 1.  # nonlinearity factor
-Nrepetitions = 100
-thetaP = 1.28848216
+Nrepetitions = 10000
+thetaP = 1.38843434 #1.24133883 #:4  1.38843434 # :1  1.28848216 # :3
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
 dataCase = 'markram'  # sjoestroem, markram
-parameterSetName = 'sHFullNoSTDSim3b'
+parameterSetName = 'sHFullNoSTDSim1b'
 
 
 synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,USTD=0.,thetaP=thetaP)
@@ -273,7 +273,7 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' 
 ##################################################################################################
 print('irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s')
 
-deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
+deltaTs   = array([-0.01,-0.01,0.,0.005,0.005])   # frequency of spike-pair presentations in pairs/sec
 Freqstart = 0.5    # start time difference between pre- and post-spike, in sec
 FreqTend   =  20.    # end time difference between pre- and post-spike, in sec
 FreqSteps =  120  # steps between start and end value
