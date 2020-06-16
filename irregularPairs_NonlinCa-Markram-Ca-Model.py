@@ -127,7 +127,7 @@ deltaCa     = 0.0001 #0.01 #  0.0001
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
 nl = 2.  # nonlinearity factor
-Nrepetitions = 1000
+Nrepetitions = 100
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
@@ -136,7 +136,7 @@ parameterSetName = 'sHFullNonlinSim1'
 
 synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
-tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
+tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl,U=synChange.U,w0=rho0)
 
 pool = multiprocessing.Pool()
 
@@ -271,7 +271,7 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' 
 ##################################################################################################
 print('irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s')
 
-deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
+deltaTs   = array([-0.01,-0.01,0.,0.005,0.005])   # frequency of spike-pair presentations in pairs/sec
 Freqstart = 1.    # start time difference between pre- and post-spike, in sec
 FreqTend   =  20.    # end time difference between pre- and post-spike, in sec
 FreqSteps =  120  # steps between start and end value

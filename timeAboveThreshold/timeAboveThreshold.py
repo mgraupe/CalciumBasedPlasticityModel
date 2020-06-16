@@ -10,7 +10,7 @@ class timeAboveThreshold():
             class to calculate the fraction of time \alpha the calcium trace spends above threshold 
         '''
         ###############################################################################
-        def __init__(self, tauCa, Cpre, Cpost, thetaD, thetaP, nonlinear=1.,Nves=0):
+        def __init__(self, tauCa, Cpre, Cpost, thetaD, thetaP, nonlinear=1.,Nves=0,U=None,w0=1.):
                 self.tauCa = tauCa
                 self.Cpre = Cpre
                 self.Cpost = Cpost
@@ -18,7 +18,10 @@ class timeAboveThreshold():
                 self.thetaP  = thetaP
                 # determine eta based on nonlinearity factor and amplitudes
                 self.nonlinear = nonlinear
-                self.eta = (self.nonlinear*(self.Cpost + self.Cpre) - self.Cpost)/self.Cpre - 1.
+                if U is None:
+                        self.eta = (self.nonlinear * (self.Cpost + w0*self.Cpre) - self.Cpost) / (w0*self.Cpre) - 1.
+                else:
+                        self.eta = (self.nonlinear * (self.Cpost + w0*U*self.Cpre) - self.Cpost)/(w0*U*self.Cpre) - 1.
                 self.Nvesicles = Nves
                 
         ###############################################################################
