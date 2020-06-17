@@ -127,12 +127,12 @@ deltaCa     = 0.0001 #0.01 #  0.0001
 T_total     = 10.     # total time of stimulation in sec
 rho0        = 0.5
 nl = 2.  # nonlinearity factor
-Nrepetitions = 100
+Nrepetitions = 10000
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
 dataCase = 'markram' # sjoestroem, markram
-parameterSetName = 'sHFullNonlinSim1'
+parameterSetName = 'sHFullNonlinSim2'
 
 synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold

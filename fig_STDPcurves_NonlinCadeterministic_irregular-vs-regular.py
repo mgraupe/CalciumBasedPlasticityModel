@@ -32,7 +32,6 @@ darkyellow = '#ff9f00'
 
 parameterSetVis = 'sJFullNonlinSim0'
 
-nonlinear = 1.
 w0 = 0.5
 
 #
@@ -42,7 +41,7 @@ w0 = 0.5
 #tatVis = timeAboveThreshold(synChangeVis.tauCa, synChangeVis.Cpre, synChangeVis.Cpost, synChangeVis.thetaD, synChangeVis.thetaP, nonlinear=nonlinear)
 
 
-parameterSetSom = 'sHFullNonlinSim1'
+parameterSetSom = 'sHFullNonlinSim2'
 #dS     = 'jesper'
 
 #synChangeSom = synapticChange(parameterSetSom,fromFile=True,nonlinear=nonlinear)
