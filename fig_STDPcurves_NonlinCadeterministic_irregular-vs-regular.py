@@ -106,7 +106,7 @@ argM = argmin((irrPairsDT[:, 0] + 0.01) ** 2)
 argP = argmin((irrPairsDT[:, 0] - 0.01) ** 2)
 
 ul = 1.8
-ll = 0.5
+ll = 0.
 
 ax80 = plt.subplot(gssub0[0])
 
@@ -273,7 +273,7 @@ argM = argmin((irrPairsDT[:,0]+0.01)**2)
 argP = argmin((irrPairsDT[:,0]-0.01)**2)
 
 ul = 1.8
-ll = 0.1
+ll = 0.
 
 ax80 = plt.subplot(gssub1[0])
 
