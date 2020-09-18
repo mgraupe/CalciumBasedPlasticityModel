@@ -21,7 +21,7 @@ Equivalently, the parameters of the plasticity model implementation can be chang
 Note that the figure also displays the results of numerical integrations of the full model. The simulations are provided as C++ code
 in [numericalSimulations](numericalSimulation/).
 
-The png and pdf versions of the figure can be produced by running the script :
+The png and pdf versions of Fig. 2 can be produced by running the script :
 ```python
 python Graupner2012PNAS_Fig2.py
 ```
@@ -30,7 +30,7 @@ python Graupner2012PNAS_Fig2.py
 
 <img src="outputFigures/Graupner2012PNAS_Fig3.png" width="250px" />
 
-The png and pdf versions of the figure can be produced by running the script :
+The png and pdf versions of Fig. 3 can be produced by running the script :
 ```python
 python Graupner2012PNAS_Fig3.py
 ```
@@ -40,7 +40,7 @@ python Graupner2012PNAS_Fig3.py
 <img src="outputFigures/Graupner2012PNAS_Fig4B.png" width="300px" />
 
 
-The png and pdf versions of the figure can be produced by running the script :
+The png and pdf versions of the Fig. 4B can be produced by running the script :
 ```python
 python Graupner2012PNAS_Fig4B.py
 ```
