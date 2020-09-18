@@ -37,7 +37,7 @@ DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
 DeltaTsteps =  2000  # steps between start and end value
 
 # chose the 'cortical slices' parameter set 
-synChange = synapticChange('cortical slices')
+synChange = synapticChange('genericCase','cortical slices')
 
 # initialize class which calculates the time the calcium trace spends above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP)

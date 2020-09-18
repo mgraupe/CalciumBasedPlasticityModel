@@ -60,16 +60,16 @@ class synapticChange():
             jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
 
 
+        if dataCase != 'genericCase':
+            self.xDataReg = jesperReg[:,[0,1]]
+            self.xDataReg[:,1] = self.xDataReg[:,1]/1000. # everything in sec
+            self.yDataReg = jesperReg[:,2]+1. # Sjoestroem's data is normalized to 0
+            self.sigmaDataReg = jesperReg[:,3]
 
-        self.xDataReg = jesperReg[:,[0,1]]
-        self.xDataReg[:,1] = self.xDataReg[:,1]/1000. # everything in sec
-        self.yDataReg = jesperReg[:,2]+1. # Sjoestroem's data is normalized to 0
-        self.sigmaDataReg = jesperReg[:,3]
-        
-        
-        self.xDataStoch = jesperStoch[:,0]
-        self.yDataStoch = jesperStoch[:,1]+1. # Sjoestroem's data is normalized to 0
-        self.sigmaDataStoch = jesperStoch[:,2]
+
+            self.xDataStoch = jesperStoch[:,0]
+            self.yDataStoch = jesperStoch[:,1]+1. # Sjoestroem's data is normalized to 0
+            self.sigmaDataStoch = jesperStoch[:,2]
 
     ##########################################################
     # calculate UP and DOWN transition probabilities

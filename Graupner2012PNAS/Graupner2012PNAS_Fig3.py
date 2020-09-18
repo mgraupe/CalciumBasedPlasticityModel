@@ -41,7 +41,7 @@ deltaBurst  = 0.0115
 
 # chose parameter set
 plasticityCase = 'hippocampal slices'
-synChange = synapticChange(plasticityCase)
+synChange = synapticChange('genericCase',plasticityCase)
 
 # initialize class which calculates the time the calcium trace spends above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP)

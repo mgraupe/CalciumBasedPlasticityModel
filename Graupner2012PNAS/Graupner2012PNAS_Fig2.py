@@ -29,7 +29,7 @@ from synapticChange import synapticChange
 ##########################################################
 # output directory
 outputDir = 'outputFigures/'
-
+numSimDir = 'numericalSimulation/'
 ##########################################################
 # Parameter of the stimulation protocol
 frequency   = 1.    # frequency of spike-pair presentations in Hz
@@ -42,6 +42,9 @@ DeltaTsteps =  2000  # steps between start and end value
 # chose from one of the six different cases : DP, DPD, DPDprime, P, D, Dprime
 plasticityCases = ['DP','P','DPD','D','DPDprime','Dprime']
 nCases = len(plasticityCases)
+
+#dpSim = np.loadtxt(numSimDir+plasticityCases[0]+'_curve/final_camkII_state_old.dat')
+dpSim = np.loadtxt(numSimDir+'output/%s_curve/final_camkII_state.dat' % plasticityCases[0])
 
 # array of the paramter to vary 
 if (interval/2. < fabs(DeltaTstart)) or (interval/2. < DeltaTend):
@@ -60,7 +63,7 @@ alphaP     = zeros((nCases,DeltaTsteps+1))
 # loop over different parameter-sets
 for k in range(nCases):
         n = 0
-        synChange = synapticChange(plasticityCases[k])
+        synChange = synapticChange('genericCase',plasticityCases[k])
         # initialize class which calculates the time the calcium trace spends above threshold
         tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP)
         # loop over range of deltaT values
@@ -114,6 +117,8 @@ gs.update(wspace=0.3,hspace=0.4)
 # possibly change outer margins of the figure
 #plt.subplots_adjust(left=0.14, right=0.92, top=0.92, bottom=0.18)
 
+
+
 for k in range(nCases):
         ax0 = plt.subplot(gs[k])
 
@@ -123,7 +128,12 @@ for k in range(nCases):
         # diplay of data
         ax0.axhline(y=1,ls='--',color='0.5',lw=2)
         ax0.axvline(x=0,ls='--',color='0.5',lw=2)
-        ax0.plot(deltaT,sChange[k],lw=3,c='m')
+        ax0.plot(deltaT, sChange[k], lw=3, c='m')
+        if plasticityCases[k] == 'DP':
+            ax0.fill_between(dpSim[:,0]/1000.,dpSim[:,4]+dpSim[:,5],dpSim[:,4]-dpSim[:,5],color='C0',alpha=0.3)
+            ax0.plot(dpSim[:,0]/1000.,dpSim[:,4],'o-',ms=3,c='C0',lw=1)
+
+
 
         # removes upper and right axes 
         # and moves left and bottom axes away
