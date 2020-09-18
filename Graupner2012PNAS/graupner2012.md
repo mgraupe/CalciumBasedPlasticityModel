@@ -12,12 +12,15 @@ Figures
 -----------
 
 **Fig. 2 : Diversity of STDP curves in response to spike pair stimulation.**
+
 <img src="outputFigures/Graupner2012PNAS_Fig2.png" width="400px" />
 
 **Fig. 3 : Numbers of postsynaptic spikes and repetitions of the stimulation motif qualitatively change the STDP curve.**
+
 <img src="outputFigures/Graupner2012PNAS_Fig3.png" width="200px" />
 
 **Fig. 4 : Plasticity for spike pairs vs. firing frequency.**
+
 <img src="outputFigures/Graupner2012PNAS_Fig4B.png" width="300px" />
 
 Change parameters and re-produce Figures
