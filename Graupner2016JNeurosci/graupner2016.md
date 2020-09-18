@@ -17,6 +17,7 @@ Figures
 <img src="outputFigures/Graupner2016JNeurosci_linearCaModel.png" width="600px" />
 
 
+
 ### J Neurosci 2016 Fig. 9 : Plasticity for irregular spike pairs in the calcium based model with nonlinear calcium dynamics.
 <img src="outputFigures/Graupner2016JNeurosci_nonlinearCaModel.png" width="600px" />
 

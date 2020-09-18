@@ -11,24 +11,39 @@ Calcium-based plasticity model explains sensitivity of synaptic changes to spike
 Figures
 -----------
 
+The parameter values for the stimulation protocol can be changed in `Graupner2012PNAS_FigXX.py` (with XX=2,3 or 4B).
+Equivalently, the parameters of the plasticity model implementation can be changed in  `synapticChange.py` .
+
 **Fig. 2 : Diversity of STDP curves in response to spike pair stimulation.**
 
 <img src="outputFigures/Graupner2012PNAS_Fig2.png" width="400px" />
+
+Note that the figure also displays the results of numerical integrations the full model. The simulations are provided as C++ code
+in [numericalSimulations](numericalSimulations/).
+
+The png and pdf versions of the figure can be produced by running the script :
+```python
+python Graupner2012PNAS_Fig2.py
+```
 
 **Fig. 3 : Numbers of postsynaptic spikes and repetitions of the stimulation motif qualitatively change the STDP curve.**
 
 <img src="outputFigures/Graupner2012PNAS_Fig3.png" width="200px" />
 
+The png and pdf versions of the figure can be produced by running the script :
+```python
+python Graupner2012PNAS_Fig3.py
+```
+
 **Fig. 4 : Plasticity for spike pairs vs. firing frequency.**
 
 <img src="outputFigures/Graupner2012PNAS_Fig4B.png" width="300px" />
 
-Change parameters and re-produce Figures
------------
 
-The parameter values for the stimulation protocol can be changed in `Graupner2012PNAS_FigXX.py` (with XX=2,3 or 4B). Equivalently, the parameters of the plasticity model implementation can be changed in  `synapticChange.py` . The png and pdf versions of the figures can be produced by running the scripts
+The png and pdf versions of the figure can be produced by running the script :
 ```python
-python Graupner2012PNAS_Fig2.py
-python Graupner2012PNAS_Fig3.py
 python Graupner2012PNAS_Fig4B.py
 ```
+
+
+
