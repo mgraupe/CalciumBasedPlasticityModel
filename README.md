@@ -23,20 +23,17 @@ for  more details regarding the scientific background, the details of the model,
 **Graupner M and Brunel N (2012).**
 Calcium-based plasticity model explains sensitivity of synaptic changes to spike pattern, rate, and dendritic location. 
 [*PNAS 109 (10): 3991-3996.*](http://www.pnas.org/content/109/10/3991.abstract)
-
-* [Find scripts and description here](Graupner2012PNAS/graupner2012.md)
+* [Find related scripts and description here](Graupner2012PNAS/graupner2012.md)
 
 **Graupner M, Wallisch P and Ostojic S (2016).**
 Natural Firing Patterns Imply Low Sensitivity of Synaptic Plasticity to Spike Timing Compared with Firing Rate. 
 [*J Neurosci 36(44):11238-11258*](http://www.jneurosci.org/content/36/44/11238)
-
-* [Find scripts and description here](Graupner2016JNeurosci/graupner2016.md)
+* [Find related scripts and description here](Graupner2016JNeurosci/graupner2016.md)
 
 **Deperrois N and Graupner M (2019).**
 Short-term depression and long-term plasticity together tune sensitive range of synaptic plasticity.
 [*accepted in PLoS Comput Biol*]; [bioRxiv 565291; doi: 10.1101/565291](https://doi.org/10.1101/565291).
-
-* [Find scripts and description here](Deperrois2019PlosComputBiol/deperrois2019.md)
+* [Find related scripts and description here](Deperrois2019PlosComputBiol/deperrois2019.md)
 
 
 
@@ -55,7 +52,8 @@ into a change in synaptic strength considering the initial distribution of synap
 
 The essence of the model is captures by the below animation. Pre- and postsynatpic spikes induce calcium transients. Whenever the
 compound calcium trace crosses depression and/or potentiation threshold, the synaptic weight is decreased or increased.
-<img src="ca-based-model_STDP.gif" width="600px" />
+
+<img src="ca-based-model_STDP.gif" width="700px" />
 
 Requires
 -----------

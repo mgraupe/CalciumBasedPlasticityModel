@@ -1,5 +1,5 @@
 
-Calcium-based plasticity model
+Calcium-based plasticity model explains sensitivity of synaptic changes to spike pattern, rate, and dendritic location
 ==============================
 
 Find here code and information related to
@@ -11,13 +11,13 @@ Calcium-based plasticity model explains sensitivity of synaptic changes to spike
 Figures
 -----------
 
-### PNAS 2012 Fig. 2 : Diversity of STDP curves in response to spike pair stimulation.
+**Fig. 2 : Diversity of STDP curves in response to spike pair stimulation.**
 <img src="outputFigures/Graupner2012PNAS_Fig2.png" width="400px" />
 
-### PNAS 2012  Fig. 3 : Numbers of postsynaptic spikes and repetitions of the stimulation motif qualitatively change the STDP curve.
+**Fig. 3 : Numbers of postsynaptic spikes and repetitions of the stimulation motif qualitatively change the STDP curve.**
 <img src="outputFigures/Graupner2012PNAS_Fig3.png" width="200px" />
 
-### PNAS 2012 Fig. 4 : Plasticity for spike pairs vs. firing frequency.
+**Fig. 4 : Plasticity for spike pairs vs. firing frequency.**
 <img src="outputFigures/Graupner2012PNAS_Fig4B.png" width="300px" />
 
 Change parameters and re-produce Figures
