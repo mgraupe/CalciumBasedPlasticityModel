@@ -1,3 +1,4 @@
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 Calcium-based plasticity model
 ==============================
@@ -15,9 +16,9 @@ depression or the potentiation threshold, respectively.
 
 The here published python and c++ code implements the calculations to obtain the change in synaptic strength
 for pre-post spike-pairs, pre-spike and post-pair, irregular spike-pair stimulation and when calcium transients
-are further subjected to short-term plasticity
+are further subjected to short-term plasticity.
 
-The provided scripts are related and grouped according to the publictaions below. Please refer to those publications
+The provided scripts are related and grouped according to the publications below. Please refer to those publications
 for  more details regarding the scientific background, the details of the model, and the results obtained.
 
 **Graupner M and Brunel N (2012).**
@@ -32,7 +33,7 @@ Natural Firing Patterns Imply Low Sensitivity of Synaptic Plasticity to Spike Ti
 
 **Deperrois N and Graupner M (2019).**
 Short-term depression and long-term plasticity together tune sensitive range of synaptic plasticity.
-[*accepted in PLoS Comput Biol*]; [bioRxiv 565291; doi: 10.1101/565291](https://doi.org/10.1101/565291).
+*accepted in PLoS Comput Biol*; [bioRxiv 565291; doi: 10.1101/565291](https://doi.org/10.1101/565291).
 * [Find related scripts and description here](Deperrois2019PlosComputBiol/deperrois2019.md)
 
 
@@ -62,16 +63,8 @@ Standard python packages such as **numpy**, **scipy**, **pylab**, **time**, **os
 
 License
 -----------
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+This project is licensed under the GNU Lesser General Public License v3.0.
+Note that the software is provided "as is", without warranty of any kind, express or implied.
+If you use the code or data, please cite us!.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
