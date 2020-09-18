@@ -16,10 +16,10 @@ Equivalently, the parameters of the plasticity model implementation can be chang
 
 **Fig. 2 : Diversity of STDP curves in response to spike pair stimulation.**
 
-<img src="outputFigures/Graupner2012PNAS_Fig2.png" width="400px" />
+<img src="outputFigures/Graupner2012PNAS_Fig2.png" width="500px" />
 
-Note that the figure also displays the results of numerical integrations the full model. The simulations are provided as C++ code
-in [numericalSimulations](numericalSimulations/).
+Note that the figure also displays the results of numerical integrations of the full model. The simulations are provided as C++ code
+in [numericalSimulations](numericalSimulation/).
 
 The png and pdf versions of the figure can be produced by running the script :
 ```python
@@ -28,7 +28,7 @@ python Graupner2012PNAS_Fig2.py
 
 **Fig. 3 : Numbers of postsynaptic spikes and repetitions of the stimulation motif qualitatively change the STDP curve.**
 
-<img src="outputFigures/Graupner2012PNAS_Fig3.png" width="200px" />
+<img src="outputFigures/Graupner2012PNAS_Fig3.png" width="250px" />
 
 The png and pdf versions of the figure can be produced by running the script :
 ```python
