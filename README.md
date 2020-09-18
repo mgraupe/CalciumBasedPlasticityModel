@@ -2,80 +2,64 @@
 Calcium-based plasticity model
 ==============================
 
-In the calcium-based plasticity model, pre- and postsynaptic spike induce calcium transients. Synaptic depression or potentiation is induced whenever the compound calcium trace crosses the depression or the potentiation threshold, respectively. 
+Synaptic plasticity, the change in efficacy of connections between neurons, is thought to underlie learning and memory.
+Synaptic plasticity is sensitive to the rate and the timing of presynaptic and postsynaptic action potentials.
+Multiple stimulation protocols have been found to be effective in changing synaptic efficacy by inducing
+long-term potentiation (LTP) or depression (LTD).  In many of those protocols, increases in postsynaptic calcium concentration
+have been shown to play a crucial role.  Here, we propose a calcium-based model of a synapse in which potentiation
+and depression are activated above calcium thresholds.
 
-The here published python scripts implement the calculations to obtain the change in synaptic strength for pre-post spike-pairs, pre-spike and post-pair, as well as 
-irregular pair stimulation. 
+In the calcium-based plasticity model, pre- and postsynaptic spikes induce calcium transients.
+Synaptic depression or potentiation is induced whenever the compound calcium trace crosses the
+depression or the potentiation threshold, respectively.
 
-For more details, please refer to :
+The here published python and c++ code implements the calculations to obtain the change in synaptic strength
+for pre-post spike-pairs, pre-spike and post-pair, irregular spike-pair stimulation and when calcium transients
+are further subjected to short-term plasticity
+
+The provided scripts are related and grouped according to the publictaions below. Please refer to those publications
+for  more details regarding the scientific background, the details of the model, and the results obtained.
 
 **Graupner M and Brunel N (2012).**
 Calcium-based plasticity model explains sensitivity of synaptic changes to spike pattern, rate, and dendritic location. 
 [*PNAS 109 (10): 3991-3996.*](http://www.pnas.org/content/109/10/3991.abstract)
 
+* [Find scripts and description here](Graupner2012PNAS/graupner2012.md)
+
 **Graupner M, Wallisch P and Ostojic S (2016).**
 Natural Firing Patterns Imply Low Sensitivity of Synaptic Plasticity to Spike Timing Compared with Firing Rate. 
 [*J Neurosci 36(44):11238-11258*](http://www.jneurosci.org/content/36/44/11238)
 
+* [Find scripts and description here](Graupner2016JNeurosci/graupner2016.md)
+
+**Deperrois N and Graupner M (2019).**
+Short-term depression and long-term plasticity together tune sensitive range of synaptic plasticity.
+[*accepted in PLoS Comput Biol*]; [bioRxiv 565291; doi: 10.1101/565291](https://doi.org/10.1101/565291).
+
+* [Find scripts and description here](Deperrois2019PlosComputBiol/deperrois2019.md)
+
+
 
 Features
 -----------
-* The `timeAboveThreshold` class calculates the time the compound calcium trace spends above a given threshold for pre-post spike-pair, pre-spike and post-burst, as well as irregular spike pairs stimulation protocols. It furthermore calculates the time above threshold for the non-linear calcium model with regular and irregular spike pair stimulation (see Graupner et al. 2016, Fig. 9).  
-* The up and down transition probabilities are furthermore calculated and converted into a change in synaptic strength considering the initial distribution of synapses and the ratio of synaptic strength between the UP and the DOWN state. 
+* The `timeAboveThreshold` class calculates the time the compound calcium trace spends above a given threshold
+for pre-post spike-pair, pre-spike and post-burst, as well as irregular spike pairs stimulation protocols.
+It furthermore calculates the time above threshold for the non-linear calcium model with regular and irregular spike
+pair stimulation (see Graupner et al. 2016, Fig. 9).
+* The `timeAboveThreshold` class implements further an event-based integration in which calcium and the synaptic efficacy
+are updated in an analytically exact way upon the occurrence of pre- and postsynaptic spikes. See [Higgins
+et al. (2014)]() for details of the event-based implementation.
+* For bistable model implementations : The up and down transition probabilities are furthermore calculated and converted
+into a change in synaptic strength considering the initial distribution of synapses and the ratio of synaptic strength between the UP and the DOWN state.
 * The basic results are plotted. 
 
-### PNAS 2012 Fig. 2 : Diversity of STDP curves in response to spike pair stimulation.
-<img src="outputFigures/Graupner2012PNAS_Fig2.png" width="400px" />
-
-### PNAS 2012  Fig. 3 : Numbers of postsynaptic spikes and repetitions of the stimulation motif qualitatively change the STDP curve.
-<img src="outputFigures/Graupner2012PNAS_Fig3.png" width="200px" />
-
-### PNAS 2012 Fig. 4 : Plasticity for spike pairs vs. firing frequency.
-<img src="outputFigures/Graupner2012PNAS_Fig4B.png" width="300px" />
-
-### J Neurosci 2016 Fig. 1, 3 and 5 : Plasticity for irregular spike pairs.
-<img src="outputFigures/Graupner2016JNeurosci_linearCaModel.png" width="600px" />
-
-### J Neurosci 2016 Fig. 9 : Plasticity for irregular spike pairs in the calcium based model with nonlinear calcium dynamics.
-<img src="outputFigures/Graupner2016JNeurosci_nonlinearCaModel.png" width="600px" />
-
-Change parameters and re-produce Figures
------------
-
-**PNAS 2012:**
-The parameter values for the stimulation protocol can be changed in `Graupner2012PNAS_FigXX.py` (with XX=2,3 or 4B). Equivalently, the parameters of the plasticity model implementation can be changed in  `synapticChange.py` . The png and pdf versions of the figures can be produced by running the scripts
-```python
-python Graupner2012PNAS_Fig2.py
-python Graupner2012PNAS_Fig3.py
-python Graupner2012PNAS_Fig4B.py
-```
-
-**J Neurosci 2016:** The data has to be first calculated by running `irregularPairs_Ca-Model.py` for the linear calcium dynamics model and `irregularPairs_nonlinear-Ca-Model.py` for the nonlinear calcium dynamics model. For the linear calcium dynamics model, the calcium integral is calculated semi-analytically in a C++ program, which has to be compiled first by running `make` in the `timeAboveThreshold` directory. The compound figures are subsequently generated by the scripts `Graupner2016JNeurosci_linearCaModel.py` and `Graupner2016JNeurosci_nonlinearCaModel.py`. In other words, the png and pdf versions of the linear calcium dynamics figures can be produced by running the following two scripts
-```python
-python irregularPairs_Ca-Model.py
-python Graupner2016JNeurosci_linearCaModel.py
-```
-
-Equivalently, for the nonlinear calcium dynamics model
-```python
-python irregularPairs_nonlinear-Ca-Model.py
-python Graupner2016JNeurosci_nonlinearCaModel.py
-```
-
-Equivalently, for the calcium dynamics model with short-term plasticity for the somatosensory cortex plasticity data (Markram et al. 1997, Science)
-```python
-python irregularPairs_stp-Ca-Makram-Model.py
-python Graupner2018_STPMarkramCaModel.py
-```
-
-Or for the calcium dynamics model with short-term plasticity for the visual cortex plasticity data (Sjoestroem 2001, Neuron)
-```python
-python irregularPairs_stp-Ca-Sjoestroem-Model.py
-python Graupner2018_STPSjoestroemCaModel.py
-```
+The essence of the model is captures by the below animation. Pre- and postsynatpic spikes induce calcium transients. Whenever the
+compound calcium trace crosses depression and/or potentiation threshold, the synaptic weight is decreased or increased.
+<img src="ca-based-model_STDP.gif" width="600px" />
 
 Requires
 -----------
+All scripts are running with **Python 3**.
 Standard python packages such as **numpy**, **scipy**, **pylab**, **time**, **os**,  **sys** and **matplotlib** are required.
 
 License

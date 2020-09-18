@@ -16,7 +16,7 @@ class synapticChange():
     # synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
     def __init__(self, dataCase, parameterSetName ,fromFile=False,nonlinear=1.,USTD = None,thetaP=None):
         # read in experimental data
-        dataDir = 'experimental_data/'
+        dataDir = '../experimental_data/'
 
         # chose parameters from predefined set or from file
         self.choseParameterSet(parameterSetName, fromFile,tP=thetaP)
