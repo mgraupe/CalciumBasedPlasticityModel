@@ -24,6 +24,7 @@ import matplotlib.gridspec as gridspec
 import multiprocessing
 import pdb
 
+sys.path.append("../")
 from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
 

@@ -23,6 +23,7 @@ import matplotlib.colors as mc
 from scipy.interpolate import interp1d
 from scipy import interpolate
 
+sys.path.append("../")
 from timeAboveThreshold.timeAboveThreshold import *
 from synapticChange import synapticChange
 
@@ -30,7 +31,7 @@ darkyellow = '#ff9f00'
 
 ##############################################################
 
-parameterSetVis = 'sJFullNoSTDSim0'
+parameterSetVis = 'sJFullSim0'
 
 nonlinear = 1.
 w0 = 0.5
@@ -42,7 +43,7 @@ w0 = 0.5
 #tatVis = timeAboveThreshold(synChangeVis.tauCa, synChangeVis.Cpre, synChangeVis.Cpost, synChangeVis.thetaD, synChangeVis.thetaP, nonlinear=nonlinear)
 
 
-parameterSetSom = 'sHFullNoSTDSim1b'
+parameterSetSom = 'sHFullSim1'
 #dS     = 'jesper'
 
 dir0 = 'simResults/'
@@ -83,7 +84,7 @@ gs = gridspec.GridSpec(2, 2,  # ,
 # ax = plt.axes((0.3, 0.12, 0.65, 0.8))
 
 # fig = plt.figure(figsize=(16,4))
-fig.subplots_adjust(hspace=0.3, wspace=0.2)
+fig.subplots_adjust(hspace=0.3, wspace=0.25)
 plt.subplots_adjust(left=0.11, right=0.97, top=0.95, bottom=0.07)
 
 # gssub0 = gridspec.GridSpecFromSubplotSpec(5, 1, subplot_spec=gs[0],hspace=0.2)
@@ -107,7 +108,7 @@ ax12 = plt.subplot(gssub2[0])
 ax12.set_title('visual cortex')
 
 ax12.axhline(y=1,ls='--',color='0.6',lw=2)
-ax12.fill_between([0,25],0.95,1.7,facecolor='0.9')
+ax12.fill_between([0,25],0.9,1.7,facecolor='0.9')
 
 ax12.plot(irrPairsFreq[:,5],irrPairsFreq[:,16]/w0,lw=2,c='red',label=r'$\Delta t = %d$ ms, $p=%s$' % (irrPairsFreq[0,4]*1000.,irrPairsFreq[0,11]))
 ax12.plot(irrPairsFreq[:,5],irrPairsFreq[:,15]/w0,lw=2,c='red',alpha=0.6,label=r'$\Delta t = %d$ ms, $p=%s$' % (irrPairsFreq[0,3]*1000.,irrPairsFreq[0,10]))
@@ -128,11 +129,11 @@ ax12.xaxis.set_ticks_position('bottom')
 ax12.set_ylim(0.9,1.7)
 ax12.set_xlim(0,80)
 
-plt.legend(loc=(0.35,0.1),frameon=False)
+plt.legend(loc=(0.35,0.15),frameon=False)
 leg = plt.gca().get_legend()
 ltext  = leg.get_texts()
 plt.setp(ltext, fontsize=12)
-
+ax12.yaxis.set_major_locator(MaxNLocator(4))
 ax12.set_ylabel('change in synaptic strength')
 #ax12.set_xlabel('rate (spk/sec)')
 
@@ -142,7 +143,7 @@ ax1 = plt.subplot(gssub2[1])
 
 
 ax1.axhline(y=0,color='0.4',ls='--')
-ax1.fill_between([0,25],-0.06,0.16,facecolor='0.9')
+ax1.fill_between([0,25],-0.03,0.18,facecolor='0.9')
 
 ax1.plot(irrPairsFreq[:,5],(irrPairsFreq[:,16]-irrPairsFreq[:,14])/w0,color='r',lw=3,label=r'$p=0.4$, $\Delta = 10$ ms')
 ax1.plot(irrPairsFreq[:,5],(irrPairsFreq[:,15]-irrPairsFreq[:,14])/w0,c='red',alpha=0.6,lw=3,label=r'$p=0.2$, $\Delta = 10$ ms')
@@ -157,7 +158,7 @@ ax1.spines['left'].set_position(('outward', 10))
 ax1.yaxis.set_ticks_position('left')
 ax1.xaxis.set_ticks_position('bottom')
 ax1.set_xlim(0,80)
-ax1.set_ylim(-0.06,0.17)
+ax1.set_ylim(-0.03,0.18)
 #plt.ylim(lls,uls)
 #plt.xticks([-50, 0, 50],[-50, 0, 50])
 ax1.set_ylabel('sensitivity to correlations')
@@ -254,7 +255,7 @@ irrPairsFreq = np.load(dir0+'irregularSpikePairs_vs_rate_differentDeltaTs_STDdet
 ax12 = plt.subplot(gssub2[0])
 ax12.set_title('somatosensory cortex')
 
-ax12.fill_between([0,8],0.85,1.45,facecolor='0.9')
+ax12.fill_between([0,8],0.82,1.45,facecolor='0.9')
 ax12.axhline(y=1,ls='--',color='0.6',lw=2)
 
 ax12.plot(irrPairsFreq[:,5],irrPairsFreq[:,16]/w0,lw=2,c='red',label=r'$\Delta t = %s$ ms, $p=%s$' % (irrPairsFreq[0,4]*1000.,irrPairsFreq[0,11]))
@@ -276,15 +277,20 @@ ax12.spines['left'].set_position(('outward', 10))
 ax12.yaxis.set_ticks_position('left')
 ax12.xaxis.set_ticks_position('bottom')
 
+plt.legend(loc=(0.4,0.07),frameon=False)
+leg = plt.gca().get_legend()
+ltext  = leg.get_texts()
+plt.setp(ltext, fontsize=12)
 ax12.set_xlim(0,20)
-ax12.set_ylim(0.85,1.45)
+ax12.set_ylim(0.82,1.45)
+ax12.yaxis.set_major_locator(MaxNLocator(4))
 #ax12.set_ylabel('change in synaptic strength')
 #ax12.set_xlabel('rate (spk/sec)')
 
 ########################################
 ax1 = plt.subplot(gssub2[1])
 
-ax1.fill_between([0,8],-0.03,0.1,facecolor='0.9')
+ax1.fill_between([0,8],-0.12,0.4,facecolor='0.9')
 ax1.axhline(y=0,color='0.4',ls='--')
 
 ax1.plot(irrPairsFreq[:,5],(irrPairsFreq[:,16]-irrPairsFreq[:,14])/w0,color='r',lw=3,label=r'$p=0.4$, $\Delta = 10$ ms')
@@ -300,7 +306,7 @@ ax1.spines['left'].set_position(('outward', 10))
 ax1.yaxis.set_ticks_position('left')
 ax1.xaxis.set_ticks_position('bottom')
 ax1.set_xlim(0,20)
-ax1.set_ylim(-0.06,0.16)
+ax1.set_ylim(-0.07,0.115)
 #plt.ylim(lls,uls)
 #plt.xticks([-50, 0, 50],[-50, 0, 50])
 #ax1.set_ylabel('sensitivity to correlations')
@@ -320,7 +326,7 @@ NN = 1001
 rateMatrix = zeros((NN, NN))
 # pdb.set_trace()
 for i in range(NN):
-    rateMatrix[:, i] = linspace(1., 2. * 10., 2 * NN)[i:(i + NN)]
+    rateMatrix[:, i] = linspace(0.5, 2. * 10., 2 * NN)[i:(i + NN)]
 
 # pdb.set_trace()
 
@@ -391,6 +397,6 @@ ax1.xaxis.set_major_locator(majorLocator_y)
 fname = os.path.basename(__file__)
 
 # savefig('ccgs_constant_coupled_networks.svg')
-plt.savefig('outputFigures/' + fname[:-3] + '_v1.pdf')
-plt.savefig('outputFigures/' + fname[:-3] + '_v1.png')  # plt.savefig(fname[:-3]+'_%s.png' % par)
+plt.savefig('outputFigures/' + fname[:-3] + '_v2.pdf')
+plt.savefig('outputFigures/' + fname[:-3] + '_v2.png')  # plt.savefig(fname[:-3]+'_%s.png' % par)
 # plt.savefig('delta_t.png')

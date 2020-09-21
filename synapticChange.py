@@ -4,7 +4,7 @@ import sys
 import pdb
 
 import parameter_fit_solutions
-            
+from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 
 ##########################################################
 # Parameter sets for the calcium and synaptic weight dynamics
@@ -14,9 +14,15 @@ class synapticChange():
     '''
     ###############################################################################
     # synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
-    def __init__(self, dataCase, parameterSetName ,fromFile=False,nonlinear=1.,USTD = None,thetaP=None):
+    def __init__(self, dataCase, parameterSetName ,fromFile=False,nonlinear=1.,USTD = None,thetaP=None,w0=0.5,par=None):
         # read in experimental data
         dataDir = '../experimental_data/'
+        self.w0 = par.w0
+        if thetaP is not None:
+            self.thetaPfixed = True
+            self.thetaP  = thetaP
+
+        #par.thetaD,par.nonlinear,par.Npairs,par.Npresentations,par.presentationInterval,par.w0,par.tauRec
 
         # chose parameters from predefined set or from file
         self.choseParameterSet(parameterSetName, fromFile,tP=thetaP)
@@ -24,23 +30,27 @@ class synapticChange():
         self.Npairs = 5
 
         if dataCase == 'sjoestroem':
-            self.tauRec = 0.148919
+            self.tauRec = par.tauRec[1]
             if USTD is None:
-                self.U = 0.383753
+                self.U = par.U[1] # 0.383753
             else:
                 self.U = USTD
-            self.Npresentations = 15
+            self.Npresentations = par.Npresentations[1] #15
             self.Nvesicles = 15
+            self.presentationInterval = par.presentationInterval[1] #10
+            self.Npairs = par.Npairs #5
             jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
         elif dataCase == 'markram':
-            self.tauRec = 0.525
+            self.tauRec = par.tauRec[0] #0.525
             if USTD is None:
-                self.U = 0.46
+                self.U = par.U[0] #0.46
             else:
                 self.U = USTD
-            self.Npresentations = 10
+            self.Npresentations = par.Npresentations[0] #10
             self.Nvesicles = 15
+            self.presentationInterval = par.presentationInterval[0] #4
+            self.Npairs = par.Npairs # 5
             jesperReg = np.loadtxt(dataDir+'henry_regular.dat')
             jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
 
@@ -117,7 +127,76 @@ class synapticChange():
         
         #synChange = synapticChange.changeSynapticStrength(synapticChange.beta,UP,DOWN,synapticChange.b)
         
-        
+
+    ##########################################################################################
+    # calculate change for regular spike-pair vs frequency protocol
+    #(xDataReg[n, 0], xDataReg[n, 1], params, par.Npairs, stoch=False)
+    def calculateChangeInSynapticStrengthSTP(self, frequency, deltaT, params, Npresentations, pairCase = 'regular', DeltaTRange = None, nonlin=1):
+        #####
+        if len(params) == 7:
+            tauCa = params[0]
+            Cpre = params[1]
+            Cpost = params[2]
+            # thetaD = params[3]
+            thetaP = self.thetaP
+            gammaD = params[3]
+            gammaP = params[4]
+            tau = params[5]
+            D = params[6]
+        elif len(params) == 8:
+            tauCa = params[0]
+            Cpre = params[1]
+            Cpost = params[2]
+            # thetaD = params[3]
+            thetaP = params[3]
+            gammaD = params[4]
+            gammaP = params[5]
+            tau = params[6]
+            D = params[7]
+
+        if pairCase == 'jitter':
+            DeltaTStart = DeltaTRange[0]
+            DeltaTEnd = DeltaTRange[1]
+        #interval = 1. / frequency
+        #### (self, tauCa, Cpre, Cpost, thetaD, thetaP, nonlinear=1.,Nves=0,U=None,w0=1.):
+        #print()
+        #if self.U == 0:
+        #    print(tauCa, Cpre, Cpost, self.thetaD, thetaP,nonlin,self.U,self.w0,deltaT - D, frequency, self.Npairs, Npresentations, self.tauRec, self.U, gammaD, gammaP,tau,self.w0,self.presentationInterval)
+        #    #pdb.set_trace()
+        tat = timeAboveThreshold(tauCa, Cpre, Cpost, self.thetaD, thetaP, nonlinear=nonlin,U=self.U,w0=self.w0)
+        if pairCase == 'jitter':
+            (self.timeD, self.timeP) = tat.spikePairFrequencySTPJitter(DeltaTStart - D, DeltaTEnd - D, frequency, self.Npairs, self.tauRec, self.U)
+        elif pairCase == 'regular':
+            (self.timeD, self.timeP) = tat.spikePairFrequencySTP(deltaT - D, frequency, self.Npairs, self.tauRec, self.U)
+        elif pairCase == 'stochastic':
+            (self.timeD, self.timeP) = tat.spikePairFrequencySTPStochastic(deltaT - D, frequency, self.Npairs, self.tauRec, self.U, self.Nvesicles)
+        elif pairCase == 'fullSimulation':
+            dyn = tat.spikePairFrequencySTPFullSimulation(deltaT - D, frequency, self.Npairs, Npresentations, self.tauRec, self.U, gammaD, gammaP,tau,self.w0,self.presentationInterval)
+            self.timeD = 0.
+            self.timeP = 1.
+            #if self.U == 0:
+            #    print(dyn[-1][5],dyn[-1][5]/self.w0)
+            #    pdb.set_trace()
+            return (dyn[-1][5]/self.w0)
+
+        # average potentiation and depression rates
+        #if not stoch:
+        #    print self.timeD, self.timeP, deltaT, deltaT - D, frequency
+        GammaP = gammaP * self.timeP
+        GammaD = gammaD * self.timeD
+        # rhoBar: average value of rho in the limit of a very long protocol equivalent to the minimum of the quadratic potentia
+        try:
+            rhoBar = GammaP / (GammaP + GammaD)
+        except RuntimeWarning:
+            print(GammaP, GammaD)
+        # tauEff : characteristic time scale of the temporal evolution of the pdf of rho
+        tauEff = tau / (GammaP + GammaD)
+        #
+        # mean value of the synaptic strength right at the end of the stimulation protocol
+        mean = rhoBar - (rhoBar - self.w0) * exp(-self.Npresentations / tauEff)
+        # change in synaptic strength after/before
+        return (mean / self.w0)
+
     ##########################################################
     # chose parameter set or read file
     def choseParameterSet(self, plasticityCase,fromFile=False,tP=None):

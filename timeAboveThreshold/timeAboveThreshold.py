@@ -10,7 +10,7 @@ class timeAboveThreshold():
         ''' 
             class to calculate the fraction of time \alpha the calcium trace spends above threshold 
         '''
-        ###############################################################################
+        ############################################################################### (self.thetaD, thetaP, tauCa, Cpre, Cpost, nonlinear=nonlin,U=self.U,w0=self.w0)
         def __init__(self, tauCa, Cpre, Cpost, thetaD, thetaP, nonlinear=1.,Nves=0,U=None,w0=1.):
                 self.tauCa = tauCa
                 self.Cpre = Cpre
@@ -19,10 +19,10 @@ class timeAboveThreshold():
                 self.thetaP  = thetaP
                 # determine eta based on nonlinearity factor and amplitudes
                 self.nonlinear = nonlinear
-                if U is None:
-                        self.eta = (self.nonlinear * (self.Cpost + w0*self.Cpre) - self.Cpost) / (w0*self.Cpre) - 1.
+                if (U is None) or (U==0):
+                        self.eta = (nonlinear*(self.Cpost + w0*self.Cpre) - self.Cpost)/(w0*self.Cpre) - 1.
                 else:
-                        self.eta = (self.nonlinear * (self.Cpost + w0*U*self.Cpre) - self.Cpost)/(w0*U*self.Cpre) - 1.
+                        self.eta = (nonlinear*(self.Cpost + w0*U*self.Cpre) - self.Cpost)/(w0*U*self.Cpre) - 1.
                 self.Nvesicles = Nves
                 
         ###############################################################################
@@ -1104,3 +1104,126 @@ class timeAboveThreshold():
                         #pdb.set_trace()
 
                 return (tD, tP)
+
+        ###############################################################################
+        # (deltaT - D, frequency, Npairs, self.Npresentations, self.tauRec, self.U,gammaP,gammaD,tau,self.w0,self.presentationInterval)
+        def spikePairFrequencySTPFullSimulation(self, deltaT, freq, Npairs, Npres, tauRec, U, gammaD, gammaP, tau, w0, presentationInterval):
+
+                # determine w dynamics parameters based on gammaP, gammaD, and tau
+                # for dynamics above thetaD and below thetaP
+                w_bar_D = 0.
+                tau_prime_D = tau / gammaD
+                # for dynamics above thetaP
+                w_bar_PD = gammaP / (gammaP + gammaD)
+                tau_prime_PD = tau / (gammaP + gammaD)
+
+                # set timing of spikes
+                tStart = 0.1  # start time at 100 ms
+                # Npres = Npres * 12
+
+                tStartPacket = tStart + arange(Npres) * presentationInterval
+                tStartPacket = repeat(tStartPacket, Npairs)
+                tPre = tile(arange(Npairs) / freq, Npres) + tStartPacket
+                tPost = tPre + deltaT
+
+                tAll = zeros((2 * Npairs * Npres, 2))
+
+                # cpre = zeros(Npres)
+                # if U != 0:
+                #    cpre[0] = 1.
+                #    for i in range(1, Npres):
+                #        cpre[i] = 1. - (1. - (cpre[i-1] - U*cpre[i-1]))*exp(-1./(freq * tauRec))
+                #    cpre *= U*self.Cpre
+                # else:
+                #    #print 'no STD'
+                #    cpre[:] = self.Cpre
+
+                # print cpre
+                tAll[:, 0] = hstack((tPre, tPost))
+                tAll[:, 1] = hstack((zeros(Npairs * Npres), ones(Npairs * Npres)))
+                # tAll[:, 2] = hstack((cpre,repeat(self.Cpost,Npres)))
+                tList = tAll.tolist()
+                # sort list to pre- and post spike according to increasing spike time
+                tListSorted = sorted(tList, key=lambda tList: tList[0])
+                # ad an additional time point (t > t_pre,t_post) to evaluate the dynamics after the last spike
+                tListSorted.append([tList[-1][0] + 10., 2])
+
+                dyn = []
+                # CaTotal, CaPre, x ... preResources, CaPost, time, w
+                dyn.append([0., 0., 1., 0., 0., w0])
+                pre = 0
+                post = 0
+                tpreOld = None
+                for i in tListSorted:
+                        #
+                        caTotOld = dyn[-1][0]
+                        caPreOld = dyn[-1][1]
+                        caPreSTDOld = dyn[-1][2]
+                        caPostOld = dyn[-1][3]
+                        tOld = dyn[-1][4]
+                        w = dyn[-1][5]
+                        # caTotTemp  = caTotOld*exp(-(i[0]-tOld)/self.tauCa)
+                        caPreTemp = caPreOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caPostTemp = caPostOld * exp(-(i[0] - tOld) / self.tauCa)
+                        caTotTemp = caPreTemp + caPostTemp
+                        # time above potentiation threshold
+                        if caTotOld > self.thetaP:
+                                tendP = i[0] if (caTotTemp > self.thetaP) else ((self.tauCa) * log(caTotOld / self.thetaP) + tOld)
+                                high = True
+                        else:
+                                high = False
+                        # time above depression threshold
+                        if (caTotOld > self.thetaD) and (caTotTemp < self.thetaP):
+                                tstartD = tOld if (caTotOld < self.thetaP) else ((self.tauCa) * log(caTotOld / self.thetaP) + tOld)
+                                tendD = i[0] if (caTotTemp > self.thetaD) else ((self.tauCa) * log(caTotOld / self.thetaD) + tOld)
+                                low = True
+                        else:
+                                low = False
+                        # time below both thresholds
+                        if (caTotOld < self.thetaD) or (caTotTemp < self.thetaD):
+                                tstartDet = tOld if (caTotOld < self.thetaD) else ((self.tauCa) * log(caTotOld / self.thetaD) + tOld)
+                                deterministic = True
+                        else:
+                                deterministic = False
+                        # performing update of w
+                        if high:
+                                w = w_bar_PD + (w - w_bar_PD) * exp(-(tendP - tOld) / tau_prime_PD)
+                        if low:
+                                w = w_bar_D + (w - w_bar_D) * exp(-(tendD - tstartD) / tau_prime_D)
+                        if deterministic:
+                                # possible update of w below thresholds in case of double-well or piecewise quadratic potential
+                                # w = ...
+                                # no update required for flat potential - line-attractor
+                                pass
+                        # postsynaptic spike
+                        if i[1] == 1:
+                                caPostTemp += self.Cpost + self.eta * caPreTemp
+                                post += 1
+                                caPreSTDTemp = caPreSTDOld
+                        # presynaptic spike
+                        # note that the influence of the presynaptically evoked calcium transient depends on w
+                        if i[1] == 0:
+                                if U != 0:
+                                        caPreSTDTemp = 1. if (tpreOld is None) else (1. - (1. - (caPreSTDOld - U * caPreSTDOld)) * exp(-(i[0] - tpreOld) / tauRec))
+                                        caPreTemp += w * U * self.Cpre * caPreSTDTemp
+                                else:
+                                        caPreTemp += w * self.Cpre
+                                        caPreSTDTemp = caPreSTDOld
+                                pre += 1
+                                tpreOld = i[0]
+
+                        caTotTemp = caPreTemp + caPostTemp
+                        dyn.append([caTotTemp, caPreTemp, caPreSTDTemp, caPostTemp, i[0], w])
+                #
+                # dyn = asarray(dyn)
+                # plt.plot(dyn[:,0])
+                # plt.show()
+                # pdb.set_trace()
+                return dyn
+
+
+
+
+
+
+

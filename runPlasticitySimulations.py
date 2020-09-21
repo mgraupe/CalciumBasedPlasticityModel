@@ -1,11 +1,3 @@
-import numpy as np
-import math
-import sys
-import pdb
-
-import parameter_fit_solutions
-
-
 ##########################################################
 # Parameter sets for the calcium and synaptic weight dynamics
 class runPlasticitySimulations():

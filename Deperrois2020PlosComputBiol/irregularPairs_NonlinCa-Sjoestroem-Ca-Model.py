@@ -18,31 +18,32 @@ from pylab import *
 import os
 import sys
 import time
-#from matplotlib import rcparameterSet
+from matplotlib import rcParams
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import multiprocessing
 import pdb
 
+sys.path.append("../")
 from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
 
 
-
 ##########################################################
 def runIrregularPairSimulations(args):
-    dT       = args[0]
-    preRate  = args[1]
+    dT = args[0]
+    preRate = args[1]
     postRate = args[2]
-    p        = args[3]
-    
-    if synChange.Cpre>synChange.Cpost:
-        (alphaD,alphaP) = tat.irregularSpikePairs(dT+synChange.D,preRate,postRate,p,deltaCa)
+    p = args[3]
+
+    if synChange.Cpre > synChange.Cpost:
+        (alphaD, alphaP) = tat.irregularSpikePairs(dT + synChange.D, preRate, postRate, p, deltaCa)
     else:
-        (alphaD,alphaP) = tat.irregularSpikePairs(dT-synChange.D,preRate,postRate,p,deltaCa)
-    synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
-    
+        (alphaD, alphaP) = tat.irregularSpikePairs(dT - synChange.D, preRate, postRate, p, deltaCa)
+    synChange.changeInSynapticStrength(T_total, rho0, alphaD, alphaP)
+
     return synChange.mean
+
 
 ##########################################################
 def runIrregularPairSTPDeterministicSimulations(args):
@@ -61,28 +62,29 @@ def runIrregularPairSTPDeterministicSimulations(args):
 
 ##########################################################
 def runIrregularPairSTPStochasticSimulations(args):
-    dT       = args[0]
-    preRate  = args[1]
+    dT = args[0]
+    preRate = args[1]
     postRate = args[2]
-    p        = args[3]
+    p = args[3]
 
-    (alphaD,alphaP) = tat.irregularSpikePairsSTPStochastic(dT-synChange.D,preRate,postRate,p,synChange.tauRec,synChange.U,synChange.Nvesicles)
+    (alphaD, alphaP) = tat.irregularSpikePairsSTPStochastic(dT - synChange.D, preRate, postRate, p, synChange.tauRec,
+                                                            synChange.U, synChange.Nvesicles)
 
-    synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
+    synChange.changeInSynapticStrength(T_total, rho0, alphaD, alphaP)
 
     return synChange.mean
 
 
 ##########################################################
 def runRegularPairSimulations(args):
-    dT       = args[0]
-    preRate  = args[1]
+    dT = args[0]
+    preRate = args[1]
     postRate = args[2]
-    p        = args[3]
-    
-    (alphaD,alphaP) = tat.spikePairFrequency(dT-synChange.D,preRate)
-    synChange.changeInSynapticStrength(T_total,rho0,alphaD,alphaP)
-    
+    p = args[3]
+
+    (alphaD, alphaP) = tat.spikePairFrequency(dT - synChange.D, preRate)
+    synChange.changeInSynapticStrength(T_total, rho0, alphaD, alphaP)
+
     return synChange.mean
 
 ##########################################################
@@ -103,6 +105,7 @@ def runRegularPairSTPDeterministicSimulations(args):
     # return synChange.mean
     return synCh
 
+
 ##########################################################
 def runRegularPairSTPStochasticSimulations(args):
     dT = args[0]
@@ -111,11 +114,13 @@ def runRegularPairSTPStochasticSimulations(args):
     p = args[3]
 
     # here alphaD and alphaP are actually the absolute times spent above threshold
-    (alphaD, alphaP) = tat.spikePairFrequencySTPStochastic(dT - synChange.D, preRate,synChange.Npairs,synChange.tauRec,synChange.U,synChange.Nvesicles)
+    (alphaD, alphaP) = tat.spikePairFrequencySTPStochastic(dT - synChange.D, preRate, synChange.Npairs,
+                                                           synChange.tauRec, synChange.U, synChange.Nvesicles)
     # in turn T_total turns into the number of the stimulation pattern presentation
     synChange.changeInSynapticStrength(synChange.Npresentations, rho0, alphaD, alphaP)
 
     return synChange.mean
+
 
 ##########################################################
 ##########################################################
@@ -131,8 +136,9 @@ Nrepetitions = 10000
 
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
-dataCase = 'markram' # sjoestroem, markram
-parameterSetName = 'sHFullNonlinSim2'
+dataCase = 'sjoestroem'  # sjoestroem, markram, sjoestroemNoSTD, markramNoSTD
+parameterSetName = 'sJFullNonlinSim0'
+#dS     = 'jesper'
 
 synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
@@ -143,10 +149,10 @@ pool = multiprocessing.Pool()
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 #################################################################################################
-print('irregular pairs : synaptic change vs Delta T for frequencies p\'s, STD deterministic')
+print('irregular pairs : synaptic change vs Delta T for frequencies p\'s')
 
 # Parameter of the stimulation protocol
-frequencies   = array([1.,2.,5.,10.,20.,40.])   # frequency of spike-pair presentations in pairs/sec
+frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
 DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
 DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
 DeltaTsteps =  101.  # steps between start and end value
@@ -156,7 +162,7 @@ nCases = len(frequencies)
 
 
 ###########################################################
-# initialize arrays
+# initialize arrays 
 deltaT = linspace(DeltaTstart,DeltaTend,DeltaTsteps)
 resultsIrr = zeros(len(frequencies)*3+2)
 
@@ -165,7 +171,7 @@ resultsIrr = zeros(len(frequencies)*3+2)
 for i in range(len(deltaT)):
     #
     print('deltaT : ', deltaT[i])
-
+    
     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
 
     rrr = pool.map(runIrregularPairSTPDeterministicSimulations,args)
@@ -179,9 +185,11 @@ resultsIrr = resultsIrr[1:]
 
 if not os.path.exists(outputDir):
     os.makedirs(outputDir)
-
+    
 np.save(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.npy' % parameterSetName,resultsIrr)
 np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' % parameterSetName,resultsIrr)
+
+#pdb.set_trace()
 
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
@@ -189,7 +197,7 @@ np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat
 print('irregular pairs : synaptic change vs Delta T for different p\'s')
 
 # Parameter of the stimulation protocol
-frequency   = 5.   # frequency of spike-pair presentations in pairs/sec
+frequency   = 10.   # frequency of spike-pair presentations in pairs/sec
 DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
 DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
 DeltaTsteps =  101.  # steps between start and end value
@@ -233,7 +241,7 @@ np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_STDdet_%s.dat' %
 print('regular pairs : synaptic change vs Delta T for frequencies p\'s')
 
 # Parameter of the stimulation protocol
-frequencies   = array([1.,2.,5.,10.,20.,40.])   # frequency of spike-pair presentations in pairs/sec
+frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
 DeltaTstart = -0.1    # start time difference between pre- and post-spike, in sec
 DeltaTend   =  0.1    # end time difference between pre- and post-spike, in sec
 DeltaTsteps =  101.  # steps between start and end value
@@ -271,9 +279,9 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_STDdet_%s.dat' 
 ##################################################################################################
 print('irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s')
 
-deltaTs   = array([-0.01,-0.01,0.,0.005,0.005])   # frequency of spike-pair presentations in pairs/sec
+deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
 Freqstart = 1.    # start time difference between pre- and post-spike, in sec
-FreqTend   =  20.    # end time difference between pre- and post-spike, in sec
+FreqTend   =  80.    # end time difference between pre- and post-spike, in sec
 FreqSteps =  120  # steps between start and end value
 ppp         = array([0.4,0.2,0.,0.2,0.4])
 
