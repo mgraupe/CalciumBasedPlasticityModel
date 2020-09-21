@@ -3,6 +3,7 @@ from numpy import *
 import pdb
 import sys
 import subprocess
+import os
 #import commands
 
 class timeAboveThreshold():
@@ -383,18 +384,26 @@ class timeAboveThreshold():
                 if self.nonlinear == 1.:
                     #print 'time above threshold : integration for LINEAR calcium dynamics'
                     # the first argument calcium ampliutde has to be smaller than the second
+                    command = ['./timeAboveThreshold/poissonPairs_timeAboveThreshold']
                     if self.Cpre>self.Cpost:
-                            arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpost) + ' ' + str(self.Cpre) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
+                            #arguments = str(deltaT) + ', ' + str(self.tauCa) + ', ' + str(self.Cpost) + ', ' + str(self.Cpre) + ', ' + str(self.thetaD) + ', ' + str(self.thetaP) + ', ' + str(preRate) + ', ' + str(postRate) + ', ' + str(ppp) + ', ' + str(deltaCa)
+                            arguments = [str(deltaT),str(self.tauCa),str(self.Cpost),str(self.Cpre),str(self.thetaD),str(self.thetaP),str(preRate),str(postRate),str(ppp),str(deltaCa)]
                     else:
-                            arguments = str(deltaT) + ' ' + str(self.tauCa) + ' ' + str(self.Cpre) + ' ' + str(self.Cpost) + ' ' + str(self.thetaD) + ' ' + str(self.thetaP) + ' ' + str(preRate) + ' ' + str(postRate) + ' ' + str(ppp) + ' ' + str(deltaCa)
-        
+                            arguments = [str(deltaT),str(self.tauCa),str(self.Cpre),str(self.Cpost),str(self.thetaD),str(self.thetaP),str(preRate),str(postRate),str(ppp),str(deltaCa)]
+
                     #print arguments
                     # depcreciated in python 3
                     # (out,err) = commands.getstatusoutput('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments)
-                    tt = subprocess.check_output('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments)
-                    pdb.set_trace()
-                    alphaD = float(err.split()[0])
-                    alphaP = float(err.split()[1])
+                    #print(os.getcwd())
+                    #print('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments)
+                    command.extend(arguments)
+                    print(command)
+                    tt = subprocess.check_output(command,cwd="../")
+                    ttString = tt.decode('utf-8')
+                    ttOut = ttString.split('\t')
+                    alphaD = float(ttOut[0])
+                    alphaP = float(ttOut[1])
+                    print(alphaD,alphaP)
                     
                 # nonlinear calcium dynamics
                 else:
