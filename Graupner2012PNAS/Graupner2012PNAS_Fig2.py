@@ -44,7 +44,10 @@ plasticityCases = ['DP','P','DPD','D','DPDprime','Dprime']
 nCases = len(plasticityCases)
 
 #dpSim = np.loadtxt(numSimDir+plasticityCases[0]+'_curve/final_camkII_state_old.dat')
-dpSim = np.loadtxt(numSimDir+'output/%s_curve/final_camkII_state.dat' % plasticityCases[0])
+simData = {}
+for p in plasticityCases:
+    simData.update({p: np.loadtxt(numSimDir+'output/%s_curve/final_camkII_state.dat' % p)})
+
 
 # array of the paramter to vary 
 if (interval/2. < fabs(DeltaTstart)) or (interval/2. < DeltaTend):
@@ -128,10 +131,10 @@ for k in range(nCases):
         # diplay of data
         ax0.axhline(y=1,ls='--',color='0.5',lw=2)
         ax0.axvline(x=0,ls='--',color='0.5',lw=2)
-        ax0.plot(deltaT, sChange[k], lw=3, c='m')
-        if plasticityCases[k] == 'DP':
-            ax0.fill_between(dpSim[:,0]/1000.,dpSim[:,4]+dpSim[:,5],dpSim[:,4]-dpSim[:,5],color='C0',alpha=0.3)
-            ax0.plot(dpSim[:,0]/1000.,dpSim[:,4],'o-',ms=3,c='C0',lw=1)
+        ax0.plot(deltaT*1000., sChange[k], lw=3, c='m')
+
+        ax0.fill_between(simData[plasticityCases[k]][:,0],simData[plasticityCases[k]][:,4]+simData[plasticityCases[k]][:,5],simData[plasticityCases[k]][:,4]-simData[plasticityCases[k]][:,5],color='C0',alpha=0.3)
+        ax0.plot(simData[plasticityCases[k]][:,0],simData[plasticityCases[k]][:,4],'o-',ms=3,c='C0',lw=1)
 
 
 
@@ -145,11 +148,11 @@ for k in range(nCases):
         ax0.xaxis.set_ticks_position('bottom')
         
         if plasticityCases[k] == 'DPD':
-                ax0.set_xlim(-0.04,0.04)
+                ax0.set_xlim(-40,40)
         elif plasticityCases[k] == 'D':
-                ax0.set_xlim(-0.015,0.015)
+                ax0.set_xlim(-15,15)
         else:
-                ax0.set_xlim(DeltaTstart,DeltaTend)
+                ax0.set_xlim(DeltaTstart*1000.,DeltaTend*1000.)
 
         ax0.xaxis.set_major_locator(MaxNLocator(5))
         #ax0.yaxis.set_major_locator(MaxNLocator(6))
@@ -157,7 +160,7 @@ for k in range(nCases):
         if not k%2:
                 plt.ylabel('change in synaptic strength')
         if k>=4:
-                plt.xlabel(r'$\Delta t$ (sec)')
+                plt.xlabel(r'$\Delta t$ (ms)')
 fname = os.path.basename(__file__)
 
 savefig(outputDir+fname[:-2]+'png')

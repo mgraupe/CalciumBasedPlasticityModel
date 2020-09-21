@@ -1,0 +1,44 @@
+# Parameter file of the camkactdy program
+t_start =0 #ms
+dt      =0.1 # corresponds to 0.1 ms
+dt_write = 0
+
+# calcium dynamics 
+ca_rest  = 0
+C_pre    = 2
+tau_pre  = 20
+C_post   = 2
+tau_post = 20
+
+# noise variables
+runs=1000
+seed=0
+
+sigma =0.4
+epsilon = 0.02
+
+# STDP protocol (pre-and postsynaptic spikes)
+t_start_1=500
+rate_1=0.001
+n_presentation_1=60
+t_simulation = 60000
+
+start_delta_t_1=-100
+end_delta_1=100
+scan_steps_1=40
+
+delay = 0
+
+# CaMKII dynamics
+rho_up=1
+rho_unstable = 0.5
+tau_rho= 3000
+dephos = 3.2
+phos = 5.14893
+
+Ct_dephos = 1
+Ct_phos = 1.3
+
+init_down = 0.5
+cond_up   = 5
+
