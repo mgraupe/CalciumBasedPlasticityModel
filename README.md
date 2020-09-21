@@ -51,7 +51,7 @@ et al. (2014)]() for details of the event-based implementation.
 into a change in synaptic strength considering the initial distribution of synapses and the ratio of synaptic strength between the UP and the DOWN state.
 * The basic results are plotted. 
 
-The essence of the model is captures by the below animation. Pre- and postsynatpic spikes induce calcium transients. Whenever the
+The essence of the model is captured by the below animation. Pre- and postsynatpic spikes induce calcium transients. Whenever the
 compound calcium trace crosses depression and/or potentiation threshold, the synaptic weight is decreased or increased.
 
 <img src="ca-based-model_STDP.gif" width="700px" />
