@@ -24,6 +24,7 @@ import matplotlib.gridspec as gridspec
 import multiprocessing
 import pdb
 
+sys.path.append("..")
 from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
 
@@ -70,7 +71,7 @@ nl = 2.  # nonlinearity factor
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
 params = 'nonlinearCaModel'
-synChange = synapticChange(params,fromFile=True,nonlinear=nl)
+synChange = synapticChange('sjoestroem',params,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 

@@ -37,7 +37,7 @@ Npresentations = 75
 w0 = 0.5
 
 #
-synChange = synapticChange(par,fromFile=True,nonlinear=nonlinear)
+synChange = synapticChange('sjoestroem',par,fromFile=True,nonlinear=nonlinear)
 
 # initialize class which calculates the time the calcium trace spends above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP,nonlinear=nonlinear)
@@ -66,7 +66,7 @@ for i in range(len(freq)):
     sChange[i,1] = synChange.mean/w0
     #
     # stochastic sjoestroem protocol
-    (alphaD,alphaP) = tat.spikePairStochastic((-0.015-synChange.D),(0.015-synChange.D),freq[i],Npresentations)
+    (alphaD,alphaP) = tat.spikePairStochasticFrequency((-0.015-synChange.D),(0.015-synChange.D),freq[i],Npresentations)
     synChange.changeInSynapticStrength(Npresentations/freq[i],w0,alphaD*freq[i],alphaP*freq[i])
     sChangeStoch[i] = synChange.mean/w0
     
