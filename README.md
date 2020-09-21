@@ -31,7 +31,7 @@ Natural Firing Patterns Imply Low Sensitivity of Synaptic Plasticity to Spike Ti
 [*J Neurosci 36(44):11238-11258*](http://www.jneurosci.org/content/36/44/11238)
 * [Find related scripts and description here](Graupner2016JNeurosci/graupner2016.md)
 
-**Deperrois N and Graupner M (2019).**
+**Deperrois N and Graupner M (2020).**
 Short-term depression and long-term plasticity together tune sensitive range of synaptic plasticity.
 *accepted in PLoS Comput Biol*; [bioRxiv 565291; doi: 10.1101/565291](https://doi.org/10.1101/565291).
 * [Find related scripts and description here](Deperrois2020PlosComputBiol/deperrois2020.md)
