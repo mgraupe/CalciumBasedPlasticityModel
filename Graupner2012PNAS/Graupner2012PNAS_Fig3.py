@@ -21,6 +21,7 @@ from matplotlib import rcParams
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
+sys.path.append("..")
 from timeAboveThreshold.timeAboveThreshold import *
 from synapticChange import synapticChange
 
