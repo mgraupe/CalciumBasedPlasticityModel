@@ -397,13 +397,13 @@ class timeAboveThreshold():
                     #print(os.getcwd())
                     #print('./timeAboveThreshold/poissonPairs_timeAboveThreshold ' + arguments)
                     command.extend(arguments)
-                    print(command)
+                    #print(command)
                     tt = subprocess.check_output(command,cwd="../")
                     ttString = tt.decode('utf-8')
                     ttOut = ttString.split('\t')
                     alphaD = float(ttOut[0])
                     alphaP = float(ttOut[1])
-                    print(alphaD,alphaP)
+                    #print(alphaD,alphaP)
                     
                 # nonlinear calcium dynamics
                 else:
@@ -431,13 +431,17 @@ class timeAboveThreshold():
                     
                     tPost = tPostCorr + tPostInd[1:]
                     
-                    tPostSorted = sorted(tPost, key=lambda tPost: tPost)
+                    tPostSortedRaw = sorted(tPost, key=lambda tPost: tPost) # sort according to increasing value
+                    tPostSorted = [item for item in tPostSortedRaw if item >= 0.] # make sure all postsynaptic spike times are postive
+                    #print(tPostSorted)
+                    tPre = tPre[1:]
+                    nPreSpikes = len(tPre)
+                    nPostSpikes = len(tPostSorted)
+                    tAll = zeros(((nPreSpikes + nPostSpikes),3))
                     
-                    tAll = zeros((len(tPre[1:]) + len(tPostSorted),3))
-                    
-                    tAll[:,0] = hstack((tPre[1:],tPostSorted))
-                    tAll[:,1] = hstack((zeros(len(tPre[1:])),ones(len(tPostSorted))))
-                    tAll[:,2] = hstack((repeat(self.Cpre,Npres),repeat(self.Cpost,Npres)))
+                    tAll[:,0] = hstack((tPre,tPostSorted))
+                    tAll[:,1] = hstack((zeros(nPreSpikes),ones(nPostSpikes)))
+                    tAll[:,2] = hstack((repeat(self.Cpre,nPreSpikes),repeat(self.Cpost,nPostSpikes)))
 
                     tList = tAll.tolist()
                     tListSorted = sorted(tList, key=lambda tList: tList[0])

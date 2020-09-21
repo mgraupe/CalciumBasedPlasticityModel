@@ -80,7 +80,7 @@ pool = multiprocessing.Pool()
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 #################################################################################################
-print 'irregular pairs : synaptic change vs Delta T for frequencies p\'s'
+print('irregular pairs : synaptic change vs Delta T for frequencies p\'s')
 
 # Parameter of the stimulation protocol
 frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
@@ -101,7 +101,7 @@ resultsIrr = zeros(len(frequencies)*3+2)
 # simulation loop over range of deltaT values
 for i in range(len(deltaT)):
     #
-    print 'deltaT : ', deltaT[i]
+    print('deltaT : ', deltaT[i])
     
     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
 
@@ -130,7 +130,7 @@ np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentFreqs_%s.dat' % par
 ##################################################################################################
 # synaptic change vs Delta T for irregular Pairs
 ##################################################################################################
-print 'irregular pairs : synaptic change vs Delta T for different p\'s'
+print('irregular pairs : synaptic change vs Delta T for different p\'s')
 
 # Parameter of the stimulation protocol
 frequency   = 10.   # frequency of spike-pair presentations in pairs/sec
@@ -151,7 +151,7 @@ resultsIrr = zeros(nCases*2+3)
 # simulation loop over range of deltaT values
 for i in range(len(deltaT)):
     #
-    print 'deltaT : ', deltaT[i]
+    print('deltaT : ', deltaT[i])
     
     args = column_stack((ones(nCases)*deltaT[i],ones(nCases)*frequency,ones(nCases)*frequency,ppp))
 
@@ -180,7 +180,7 @@ np.savetxt(outputDir+'irregularSpikePairs_vs_deltaT_differentPs_%s.dat' % params
 ##########################################################
 # synaptic change vs Delta T for regular Pairs
 ##########################################################
-print 'regular pairs : synaptic change vs Delta T for frequencies p\'s'
+print('regular pairs : synaptic change vs Delta T for frequencies p\'s')
 
 # Parameter of the stimulation protocol
 frequencies   = array([1.,5.,10.,20.,40.,80.])   # frequency of spike-pair presentations in pairs/sec
@@ -200,7 +200,7 @@ resultsReg = zeros(len(frequencies)*3+2)
 # simulation loop over range of deltaT values
 for i in range(len(deltaT)):
     #
-    print 'deltaT : ', deltaT[i]
+    print('deltaT : ', deltaT[i])
     
     args = column_stack((ones(nCases)*deltaT[i],frequencies,frequencies,ones(nCases)*ppp))
 
@@ -219,7 +219,7 @@ np.savetxt(outputDir+'regularSpikePairs_vs_deltaT_differentFreqs_%s.dat' % param
 ##################################################################################################
 # synaptic change vs frequency
 ##################################################################################################
-print 'irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s'
+print('irregular pairs : synaptic change vs rate for different deltaT\'s and p\'s')
 
 deltaTs   = array([-0.01,-0.01,0.,0.01,0.01])   # frequency of spike-pair presentations in pairs/sec
 Freqstart = 0.1    # start time difference between pre- and post-spike, in sec
@@ -238,7 +238,7 @@ results = zeros(len(deltaTs)*3+2)
 # simulation loop over range of deltaT values
 for i in range(len(frequencies)):
     #
-    print 'rate : ', frequencies[i]
+    print('rate : ', frequencies[i])
     
     args = column_stack((deltaTs,ones(nCases)*frequencies[i],ones(nCases)*frequencies[i],ppp))
 
