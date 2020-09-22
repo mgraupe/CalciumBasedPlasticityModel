@@ -37,7 +37,7 @@ Npresentations = 75
 w0 = 0.5
 
 #
-synChange = synapticChange('sjoestroem',par,fromFile=True,nonlinear=nonlinear)
+synChange = synapticChange('sjoestroemNoSTD',par,fromFile=True,nonlinear=nonlinear)
 
 # initialize class which calculates the time the calcium trace spends above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP,nonlinear=nonlinear)

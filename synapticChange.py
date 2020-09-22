@@ -43,6 +43,9 @@ class synapticChange():
             self.Npairs = par.Npairs #5
             jesperReg = np.loadtxt(dataDir+'sjoestroem_regular_all.dat')
             jesperStoch = np.loadtxt(dataDir+'sjoestroem_stochastic.dat')
+        elif dataCase == 'sjoestroemNoSTD':
+            jesperReg = np.loadtxt(dataDir + 'sjoestroem_regular_all.dat')
+            jesperStoch = np.loadtxt(dataDir + 'sjoestroem_stochastic.dat')
         elif dataCase == 'markram':
             self.tauRec = par.tauRec[0] #0.525
             if USTD is None:

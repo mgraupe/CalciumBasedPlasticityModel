@@ -71,7 +71,7 @@ nl = 2.  # nonlinearity factor
 ###########################################################
 # initiate synaptic change class and chose parameter set from file
 params = 'nonlinearCaModel'
-synChange = synapticChange('sjoestroem',params,fromFile=True,nonlinear=nl)
+synChange = synapticChange('sjoestroemNoSTD',params,fromFile=True,nonlinear=nl)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
