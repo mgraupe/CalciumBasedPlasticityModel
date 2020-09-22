@@ -17,10 +17,12 @@ class synapticChange():
     def __init__(self, dataCase, parameterSetName ,fromFile=False,nonlinear=1.,USTD = None,thetaP=None,w0=0.5,par=None):
         # read in experimental data
         dataDir = '../experimental_data/'
-        self.w0 = par.w0
+
         if thetaP is not None:
             self.thetaPfixed = True
             self.thetaP  = thetaP
+        if par is not None:
+            self.w0 = par.w0
 
         #par.thetaD,par.nonlinear,par.Npairs,par.Npresentations,par.presentationInterval,par.w0,par.tauRec
 
