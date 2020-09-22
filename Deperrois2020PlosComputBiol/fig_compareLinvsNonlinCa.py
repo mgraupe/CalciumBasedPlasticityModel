@@ -7,8 +7,10 @@ from matplotlib import rcParams
 import pdb
 import os
 import matplotlib.ticker as ticker
+import sys
 
-from synUtils import *
+sys.path.append("../")
+#from synUtils import *
 import synapticChange as synChange
 
 import params as par
