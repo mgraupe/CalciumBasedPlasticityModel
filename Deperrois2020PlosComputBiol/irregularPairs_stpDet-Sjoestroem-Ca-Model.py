@@ -27,7 +27,7 @@ import pdb
 sys.path.append("../")
 from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
-
+import params as par
 
 ##########################################################
 def runIrregularPairSimulations(args):
@@ -140,7 +140,7 @@ Nrepetitions = 1000
 dataCase = 'sjoestroem'  # sjoestroem, markram, sjoestroemNoSTD, markramNoSTD
 parameterSetName = 'sJFullSim0'
 
-synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl)
+synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,par=par)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 

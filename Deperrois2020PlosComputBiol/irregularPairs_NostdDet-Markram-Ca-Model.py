@@ -27,7 +27,7 @@ import pdb
 sys.path.append("../")
 from timeAboveThreshold.timeAboveThreshold import timeAboveThreshold
 from synapticChange import synapticChange
-
+import params as par
 
 
 ##########################################################
@@ -137,7 +137,7 @@ dataCase = 'markram'  # sjoestroem, markram
 parameterSetName = 'sHFullNoSTDSim1b'
 
 
-synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,USTD=0.,thetaP=thetaP)
+synChange = synapticChange(dataCase,parameterSetName,fromFile=True,nonlinear=nl,USTD=0.,thetaP=thetaP,par=par)
 # initiate class to calculate fraction of time above threshold
 tat = timeAboveThreshold(synChange.tauCa, synChange.Cpre, synChange.Cpost, synChange.thetaD, synChange.thetaP, nonlinear=nl)
 
