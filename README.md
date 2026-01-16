@@ -36,6 +36,10 @@ Short-term depression and long-term plasticity together tune sensitive range of 
 *accepted in PLoS Comput Biol*; [bioRxiv 565291; doi: 10.1101/565291](https://doi.org/10.1101/565291).
 * [Find related scripts and description here](Deperrois2020PlosComputBiol/deperrois2020.md)
 
+**Yulia Dembitskaya, Silvana Valtcheva, Yihui Cui, Zhiwei Zheng, Srdjan Ostojic, Michael Graupner, and Laurent Venance (2026).**
+Irregular and bursty neuronal firing extend spike-timing dependent plasticity window to behavioral timescales.
+*submitted for publication.
+* [Find related scripts and description here](https://github.com/mgraupe/CalciumPlasticityModelIrregularActivity/tree/venanceData?tab=readme-ov-file)
 
 
 Features
